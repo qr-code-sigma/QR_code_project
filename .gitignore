@@ -1,0 +1,54 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.pyc
+
+# Django-specific
+*.log
+*.pot
+*.py[cod]
+*.sqlite3
+db.sqlite3
+media/
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Python distribution packages
+*.egg
+*.egg-info
+dist/
+build/
+
+# Logs and coverage
+*.log
+*.coverage
+.coverage.*
+nosetests.xml
+test_*.xml
+*.cover
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Static files collected by Django
+staticfiles/
+
+# Django migrations (optional, but usually not needed in version control)
+*/migrations/
+
+# Media files (optional, if you store user-uploaded files here)
+media/

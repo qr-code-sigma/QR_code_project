@@ -52,3 +52,6 @@ staticfiles/
 
 # Media files (optional, if you store user-uploaded files here)
 media/
+
+config_creator.py
+.env

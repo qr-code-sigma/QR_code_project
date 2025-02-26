@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
 
 class Event(models.Model):
     id = models.AutoField(primary_key=True)
@@ -14,7 +14,7 @@ class Event(models.Model):
         managed = False
 
 
-class User(models.Model):
+class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -24,7 +24,6 @@ class User(models.Model):
         max_length=10,
         choices=[('admin', 'Admin'), ('guest', 'Guest'), ('employee', 'Employee')]
     )
-
     class Meta:
         db_table = "users"
         unique_together = ('first_name', 'last_name')

@@ -12,13 +12,15 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotend
+import configparser
 import os
+from dotenv import load_dotenv, dotenv_values
 
-load_dotend()
+load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+config_path = os.path.join(Path(__file__).resolve().parent.parent, "config.ini")
+config = configparser.ConfigParser()
+config.read(config_path)
 
 
 # Quick-start development settings - unsuitable for production
@@ -94,14 +96,18 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+AUTH_USER_MODEL = 'api.User'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config.get('Database', 'db_name'),
+        'USER': config.get('Database', 'db_user'),
+        'PASSWORD': os.getenv("DATABASE_PASSWORD"),
+        'HOST': config.get('Database', 'db_host'),
+        'PORT': config.get('Database', 'db_port'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

@@ -21,12 +21,18 @@ class UserSerizalizer(serializers.ModelSerializer):
         return attr
     
     def create(self, data):
-        user = User.objects.create_user(
-            username = data['username'],
-            first_name = data['first_name'],
-            last_name = data['last_name'],
-            email = data['email']
-        )
-        user.set_password(self.validate(data).get('password'))
-        user.save()
-        return user
+        try:
+            user = User.objects.create_user(
+                    username = data['username'],
+                    first_name = data['first_name'],
+                    last_name = data['last_name'],
+                    email = data['email'],
+                    status = "guest"
+            )
+            user.set_password(self.validate(data).get('password'))
+            user.save()
+        
+            return user
+        except Exception:
+            print("User already exsists")
+            raise serializers.ValidationError({"lol":"loooool"})

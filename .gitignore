@@ -1,5 +1,10 @@
+# Node.js
 .idea
 node_modules
+dist
+dist-ssr
+*.local
+
 # Logs
 logs
 *.log
@@ -9,16 +14,50 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-dist
-dist-ssr
-*.local
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.pyc
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+# Django-specific
+*.pot
+*.py[cod]
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+*/migrations/
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# IDEs and editors
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Operating System files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# Python distribution packages
+*.egg
+*.egg-info
+dist/
+build/
+
+# Logs and coverage
+*.coverage
+.coverage.*
+nosetests.xml
+test_*.xml
+*.cover
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+config_creator.py
+.env

@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {confirmEmail} from "../../redux/reducers/user.js";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 function Registration() {
     const [code, setCode] = useState("");
     const [isDisabled, setIsDisabled] = React.useState(true);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { status, error } = useSelector(state => state.user)
 
     const location = useLocation();
@@ -21,6 +22,12 @@ function Registration() {
 
         dispatch(confirmEmail({code, email}))
     }
+
+    useEffect(() => {
+        if(status === 'resolved') {
+            navigate('/');
+        }
+    }, [status]);
 
     useEffect(() => {
         if(code.length === 6) {

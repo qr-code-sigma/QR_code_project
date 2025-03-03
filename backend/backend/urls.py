@@ -21,7 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('events/', event_list, name='events-list'),
     path('events/<int:id>', event_detail, name="event-detail"),
-    path('/home', base, name="base")
+    path('home', base, name="base")
 
 ]
 

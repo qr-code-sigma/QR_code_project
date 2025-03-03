@@ -83,6 +83,7 @@ def register(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
+            print(data)
         except json.JSONDecodeError:
             print("Bad json could not decode")
             return JsonResponse({"error":"bad request"}, status = 400)
@@ -106,18 +107,3 @@ def get_csrf_token(request):
     return response
 
 
-
-# def activate_account(request, uidb64, token):
-#     try:
-#         uid = force_str(urlsafe_base64_decode(uidb64))
-#         user = get_user_model().objects.get(pk=uid)
-        
-#         if default_token_generator.check_token(user, token):
-#             user.is_active = True
-#             user.save()
-#             return None #ssilka na front
-#         else:
-#             return None
-        
-#     except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
-#         return redirect('register')

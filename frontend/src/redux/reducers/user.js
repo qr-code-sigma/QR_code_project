@@ -4,13 +4,13 @@ import axiosInstance from '../../config/axiosConfig.js'
 export const createUser = createAsyncThunk(
     'user/create',
     async function({user, navigate}, {rejectWithValue}) {
-        const response = await axiosInstance.post('/users', {
-            firstName: user.firstName,
-            secondName: user.secondName,
-            password1: user.password1,
-            password2: user.password2,
+        const response = await axiosInstance.post('/auth/register', {
+            first_name: user.firstName,
+            last_name: user.lastName,
+            password: user.password,
+            password2: user.confirmPassword,
             email: user.email,
-            username: user.username
+            username: user.userName
         });
 
         if(response.status > 200) {
@@ -28,7 +28,7 @@ export const confirmEmail = createAsyncThunk(
     async function({code, email}, {rejectWithValue}) {
         let response;
         try {
-            response = await axiosInstance.post('/confirm_email', {code, email});
+            response = await axiosInstance.post('/auth/confirm_email', {code, email});
         } catch(e) {
             return rejectWithValue(response.status)
         }

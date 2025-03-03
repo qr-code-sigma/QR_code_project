@@ -1,22 +1,16 @@
 import json
-
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.forms import UserCreationForm
+from django.core.cache import cache
+from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.middleware.csrf import get_token
-from django.template.loader import render_to_string
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.core.mail import EmailMessage
-from django.contrib import messages
-from django.contrib.auth.tokens import default_token_generator
-
 from api.models import User
+from django.core.mail import EmailMessage
+from django.contrib.auth.tokens import default_token_generator
 from .serializers import UserSerizalizer
+import threading 
+import random 
 
 @csrf_exempt
 @require_POST
@@ -43,23 +37,45 @@ def logout_view(request):
     return JsonResponse({'details': 'Logout successful!'})
 
 def activate_email(request, user, to_email):
+    verification_code = random.randint(100000, 999999)
+    id_ = user.email
+    cache.set(f"otp_{id_}", verification_code, timeout=5000)
     print("Sending email...")
     email_subject = "Account Activation"
-    activation_link = f"{'https' if request.is_secure() else 'http'}://{get_current_site(request).domain}/api/v1/auth/activate/{urlsafe_base64_encode(force_bytes(user.pk))}/{default_token_generator.make_token(user)}"
     message = f"""
     Hi {user.username},
-    Thank you for registering! Please activate your account by clicking the link below:
-    {activation_link}
+    Thank you for registering! Your verification code: {verification_code}
     If you did not request this, please ignore this email.
     """
-    messages.success(request, "Thank you for registration! Please confirm your email by clicking the activation link we sent!")
-    
     email = EmailMessage(email_subject, message, to=[to_email])
     if email.send():
         print("Email sent")
 
+@require_POST
+@csrf_exempt
+def verify_otp(request):
+    data = json.loads(request.body)
+    try:
+        code = data.get('code')
+        email = data.get('email')
+        user = User.objects.get(email = email)
+        print(user)
+    except Exception:
+        print("Nichogo")
+        return JsonResponse({"error":"Invalid data"}, status = 400)
+
+    actual_code = int(cache.get(f"otp_{email}"))
+    print(actual_code)
+    if int(code) != actual_code:
+        print("Shos")
+        return JsonResponse({"verified":False}, status = 400)
+    else:
+        user.is_active = True
+        login(request, user)
+        return JsonResponse({"verified":True}, status = 200)
 
 @csrf_exempt
+@require_POST
 def register(request):
     if request.user.is_authenticated:
         print("Already authenticated")
@@ -75,7 +91,8 @@ def register(request):
             user = serizalizer.save()
             user.is_active = False
             print(user)
-            activate_email(request, user, user.email)
+            email_thread = threading.Thread(target = activate_email, args = [request, user, user.email])
+            email_thread.start()
             return JsonResponse({"success":"User signed up"}, status = 200)
         else:
             [print(f'Field {k} : {v}') for k , v in serizalizer.errors.items()]
@@ -90,20 +107,17 @@ def get_csrf_token(request):
 
 
 
-def activate_account(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = get_user_model().objects.get(pk=uid)
+# def activate_account(request, uidb64, token):
+#     try:
+#         uid = force_str(urlsafe_base64_decode(uidb64))
+#         user = get_user_model().objects.get(pk=uid)
         
-        if default_token_generator.check_token(user, token):
-            user.is_active = True
-            user.save()
-            messages.success(request, "Your account has been activated")
-            return redirect('/api/v1/events')
-        else:
-            messages.error(request, "Invalid or expired token")
-            return redirect("register")
+#         if default_token_generator.check_token(user, token):
+#             user.is_active = True
+#             user.save()
+#             return None #ssilka na front
+#         else:
+#             return None
         
-    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
-        messages.error(request, "Invalid link")
-        return redirect('register')
+#     except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+#         return redirect('register')

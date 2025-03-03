@@ -1,7 +1,7 @@
 from .models import Event
 from .serializers import EventSerializer
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
+from django.db.models import Q
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,15 +12,17 @@ from django.http import HttpResponse
 #     return render(request, 'index.html'
 #     )
 
-
-
 def base(request):
     return HttpResponse("<h1>Hello</h1>")
-#@permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST'])
 def event_list(request):
     if request.method == "GET":
         events = Event.objects.all()
+        filters = Q()
+        for key, value in request.GET.items():
+            if key in [field.name for field in Event._meta.get_fields()]:
+                filters &= Q(**{key: value})
+        events = events.filter(filters)
         serializer = EventSerializer(events, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -1,0 +1,137 @@
+.event-page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.back-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 100px;
+    height: 100px;
+    width: 100%;
+}
+
+.event-main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    gap: 42px;
+    margin-bottom: 50px;
+}
+
+.event-page-title {
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.places-badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 25px;
+    width: 69px;
+    border: 1px solid black;
+    border-radius: 15px;
+    padding: 6px 12px;
+    font-size: 12px;
+    margin: 0;
+    background-color: var(--background-secondary);
+    font-weight: 600;
+}
+
+.event-main-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    gap: 10px;
+}
+
+.event-page-description, .event-page-date, .event-page-location, .event-page-status {
+    border-radius: 5px;
+    padding: 10px;
+    border: 2px black solid;
+    box-shadow: 4px 4px 0px black;
+    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    text-align: start;
+}
+
+.event-page-date, .event-page-location, .event-page-status {
+    text-align: center;
+}
+
+.event-page-date {
+    flex: 1.5;
+}
+
+.event-page-location {
+    flex: 3;
+}
+
+.event-page-status {
+    flex: 1;
+}
+
+.event-page-description {
+    background-color: var(--btn-settings);
+}
+
+.event-page-date, .event-page-location {
+    background-color: var(--yellow);
+}
+
+.event-page-status.public {
+    background-color: var(--badge-public);
+}
+
+.event-page-status.private {
+    background-color: var(--badge-private);
+}
+
+.event-page-info {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.registered-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 50px;
+    width: 200px;
+    border: 1px solid black;
+    border-radius: 15px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: var(--background-secondary);
+}
+
+.registration-success {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+}
+
+.qr-code-placeholder {
+    width: 180px;
+    height: 180px;
+    background-color: white;
+    border: 2px solid black;
+}
+
+.btn-lg {
+    margin-top: 20px;
+}

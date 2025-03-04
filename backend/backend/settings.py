@@ -35,9 +35,9 @@ SECRET_KEY = 'django-insecure-x1)zx0+h5#@h_lycg!umor16734h!_e2)&+1d-r+q@08_2rrk$
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-CORS_ALLOWED_ORIGINS = [
-    "https://qr-code-project-sigma.netlify.app",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "https://qr-code-project-sigma.netlify.app",
+# ]
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
@@ -181,7 +181,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWS_CREDENTIALS = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

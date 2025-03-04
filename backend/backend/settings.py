@@ -35,6 +35,21 @@ SECRET_KEY = 'django-insecure-x1)zx0+h5#@h_lycg!umor16734h!_e2)&+1d-r+q@08_2rrk$
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+CORS_ALLOWED_ORIGINS = [
+    "https://qr-code-project-sigma.netlify.app",
+]
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+CORS_ALLOW_ALL_HEADERS = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -174,9 +189,9 @@ CACHES = {
     }
 }
 
-CSP_DEFAULT_SRC = ("'self'", "https://qr-code-project-sigma.netlify.app")
-CSP_SCRIPT_SRC = ("'self'", "'unsafe-eval'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")
-CSP_CONNECT_SRC = ("'self'", "https://qr-code-project-sigma.netlify.app", "https://qr-code-project.up.railway.app")
-CSP_FONT_SRC = ("'self'", "data:", "https://qr-code-project-sigma.netlify.app")
-CSP_IMG_SRC = ("'self'", "data:", "https://qr-code-project-sigma.netlify.app")
-CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")
+CSP_DEFAULT_SRC = None
+# CSP_SCRIPT_SRC = ("'self'", "'unsafe-eval'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")
+# CSP_CONNECT_SRC = ("'self'", "https://qr-code-project-sigma.netlify.app", "https://qr-code-project.up.railway.app")
+# CSP_FONT_SRC = ("'self'", "data:", "https://qr-code-project-sigma.netlify.app")
+# CSP_IMG_SRC = ("'self'", "data:", "https://qr-code-project-sigma.netlify.app")
+# CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")

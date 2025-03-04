@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import "./event.css";
+import { useLocation, useNavigate } from "react-router-dom";
 
-function Event({ status }) {
+function Event() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [registered, setRegistered] = useState(false);
 
   const handleRegister = () => {
@@ -9,51 +12,44 @@ function Event({ status }) {
   };
 
   const statusClass =
-    status === "Public"
+    location.state.status === "Public"
       ? "event-page-status public"
       : "event-page-status private";
 
   return (
     <div className="event-page-container">
       <header className="back-header">
-        <button className="btn-default">
+        <button className="btn-default" onClick={() => navigate(-1)}>
           <span>Back</span>
         </button>
       </header>
       <main className="event-main-container">
-        <p className="event-page-title">Tech Conference</p>
-        <div className="places-badge">82/100</div>
+        <p className="event-page-title">{location.state.title}</p>
+        <div className="places-badge">
+          {location.state.current_people}/{location.state.max_people}
+        </div>
         <section className="event-main-content">
           <div className="event-page-description">
             <p>
-              <b>Description: </b>Join us at the Tech Conference 2025, where
-              leading experts will present groundbreaking tech innovations, and
-              attendees can network with industry professionals. Explore
-              workshops, panels, and demos showcasing the future of technology.
-              Whether you're a startup founder or a tech enthusiast, this event
-              offers valuable insights and opportunities.Join us at the Tech
-              Conference 2025, where leading experts will present groundbreaking
-              tech innovations, and attendees can network with industry
-              professionals. Explore workshops, panels, and demos showcasing the
-              future of technology. Whether you're a startup founder or a tech
-              enthusiast, this event offers valuable insights and opportunities.
+              <b>Description: </b> {location.state.description}
             </p>
           </div>
           <div className="event-page-info">
             <div className="event-page-date">
               <p>
-                <b>Date: </b>22.05.2025, 18.00
+                <b>Date: </b>
+                {location.state.date}
               </p>
             </div>
             <div className="event-page-location">
               <p>
-                <b>Location: </b>1234 Polyana Street, Apt 56 New York
+                <b>Location: </b> {location.state.location}
               </p>
             </div>
             <div className={statusClass}>
               <p>
                 <b>Status: </b>
-                {status}
+                {location.state.status}
               </p>
             </div>
           </div>

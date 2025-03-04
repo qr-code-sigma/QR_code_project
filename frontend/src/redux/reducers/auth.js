@@ -1,53 +1,48 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
-import axiosInstance from '../../config/axiosConfig.js'
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosInstance from "../../config/axiosConfig.js";
 
-export const getMe = createAsyncThunk(
-    'user/create',
-    async function({user}) {
-        const response = await axiosInstance.get('/getMe');
+export const getMe = createAsyncThunk("user/create", async function ({ user }) {
+  const response = await axiosInstance.get("/getMe");
 
-        return response.data;
-    }
-)
+  return response.data;
+});
 
 const initialState = {
-    userData: {},
-    isAuthenticated: false,
-    status: null
-}
+  userData: {},
+  isAuthenticated: true,
+  status: null,
+};
 
 const setError = (state, action) => {
-    state.status = 'rejected';
-    state.error = action.payload;
-}
+  state.status = "rejected";
+  state.error = action.payload;
+};
 
 export const authSlice = createSlice({
-    name: 'userSlice',
-    initialState,
-    reducers: {
-        test: (state, action) => {
-
+  name: "userSlice",
+  initialState,
+  reducers: {
+    test: (state, action) => {},
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getMe.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(getMe.fulfilled, (state, action) => {
+        state.status = "resolved";
+        state.isAuthenticated = action.payload.isAuthenticated;
+        if (action.payload.isAuthenticated) {
+          state.userData = action.payload.userData;
+        } else {
+          state.userData = {};
         }
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(getMe.pending, (state) => {
-                state.status = 'loading';
-                state.error = null;
-            })
-            .addCase(getMe.fulfilled, (state, action) => {
-                state.status = 'resolved';
-                state.isAuthenticated = action.payload.isAuthenticated;
-                if(action.payload.isAuthenticated) {
-                    state.userData = action.payload.userData;
-                } else {
-                    state.userData = {};
-                }
-            })
-            .addCase(getMe.rejected, setError)
-    },
-})
+      })
+      .addCase(getMe.rejected, setError);
+  },
+});
 
-export const {test} = authSlice.actions
+export const { test } = authSlice.actions;
 
-export default authSlice.reducer
+export default authSlice.reducer;

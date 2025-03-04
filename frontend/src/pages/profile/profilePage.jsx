@@ -3,14 +3,15 @@ import "./profilePage.css";
 import ProfileHeader from "../../components/ProfileHeader/ProfileHeader";
 import Footer from "../../components/Footer/Footer.jsx";
 import Events from "../../components/Events/events.jsx";
+import events from "../../test/UserEvents.js";
 
 function ProfilePage({ status }) {
   const statusClass =
     status === "Public"
       ? "user-status public"
       : status === "Employee"
-      ? "user-status employee"
-      : "user-status admin";
+        ? "user-status employee"
+        : "user-status admin";
 
   return (
     <div className="profile-page-container">
@@ -43,7 +44,7 @@ function ProfilePage({ status }) {
             </button>
           </form>
         </section>
-        <Events />
+        <Events events={events} />
       </main>
       <Footer />
     </div>

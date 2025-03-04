@@ -3,7 +3,7 @@ from django.core.cache import cache
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.middleware.csrf import get_token
 from api.models import User
 from django.core.mail import EmailMessage
@@ -16,25 +16,27 @@ import random
 @require_POST
 def login_view(request):
     data = json.loads(request.body)
+    print(data)
     username = data.get('username')
     password = data.get('password')
 
     user = authenticate(username=username, password=password)
 
     if user is None:
-        return JsonResponse({'details': 'Invalid credentials!'})
+        print("Ivalid credentials")
+        return JsonResponse({'details': 'Invalid credentials!'}, status = 400)
 
     login(request, user)
-    return JsonResponse({'details': 'Login successful!'})
+    return JsonResponse({'details': 'Login successful!'}, status = 200)
 
 @csrf_exempt
 @require_POST
 def logout_view(request):
     if not request.user.is_authenticated:
-        return JsonResponse({'details': 'You are not logged in!'})
+        return JsonResponse({'details': 'You are not logged in!'}, status = 403)
 
     logout(request)
-    return JsonResponse({'details': 'Logout successful!'})
+    return JsonResponse({'details': 'Logout successful!'}, status = 200)
 
 def activate_email(request, user, to_email):
     verification_code = random.randint(100000, 999999)
@@ -106,4 +108,21 @@ def get_csrf_token(request):
     response.set_cookie("csrftoken", get_token(request))
     return response
 
-
+@require_GET
+def get_me(request):
+    if request.user.is_authenticated:
+        user = request.user
+        username = user.username
+        email = user.email
+        first_name = user.first_name
+        last_name = user.last_name
+        response = {
+            "username":username,
+            "email":email,
+            "first_name":first_name,
+            "last_name":last_name
+        }
+        return JsonResponse(response, status = 200)        
+    else:
+        print("User not authenticated")
+        return JsonResponse({"error":"User is not authenticated"}, status = 403)

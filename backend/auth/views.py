@@ -1,13 +1,12 @@
 import json
 from django.core.cache import cache
 from django.http import JsonResponse
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.middleware.csrf import get_token
 from api.models import User
 from django.core.mail import EmailMessage
-from django.contrib.auth.tokens import default_token_generator
 from .serializers import UserSerizalizer
 import threading 
 import random 
@@ -96,6 +95,7 @@ def register(request):
             print(user)
             email_thread = threading.Thread(target = activate_email, args = [request, user, user.email])
             email_thread.start()
+            email_thread.join()
             return JsonResponse({"success":"User signed up"}, status = 200)
         else:
             [print(f'Field {k} : {v}') for k , v in serizalizer.errors.items()]

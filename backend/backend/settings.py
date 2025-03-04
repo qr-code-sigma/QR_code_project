@@ -61,7 +61,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'csp'
 ]
 
 MIDDLEWARE = [
@@ -164,3 +165,13 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 PASSWORD_RESET_TIMEOUT = 14400
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1", 
+    }
+}
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-eval'", "'unsafe-inline'")

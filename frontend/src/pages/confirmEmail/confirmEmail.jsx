@@ -20,7 +20,7 @@ function Registration() {
     const onSubmit = (e) => {
         e.preventDefault()
 
-        dispatch(confirmEmail({code, email}))
+        dispatch(confirmEmail({code, email, navigate}))
     }
 
     useEffect(() => {

@@ -26,7 +26,7 @@ export const createUser = createAsyncThunk(
 
 export const confirmEmail = createAsyncThunk(
     'user/confirmEmail',
-    async function({code, email}, {rejectWithValue}) {
+    async function({code, email, navigate}, {rejectWithValue}) {
         let response;
         try {
             response = await axiosInstance.post('/auth/confirm_email', {code, email});
@@ -37,6 +37,8 @@ export const confirmEmail = createAsyncThunk(
         if(response.status > 200) {
             return rejectWithValue(response.status)
         } else {
+            navigate('/')
+            window.location.reload();
             return 'successful'
         }
     }

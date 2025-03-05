@@ -23,6 +23,7 @@ export const authMe = createAsyncThunk (
         }
 
         navigate('/');
+
         return response.data.details;
     }
 )

@@ -99,6 +99,7 @@ def register(request):
                 email_thread.join()
                 return JsonResponse({"success":"User signed up"}, status = 200)
             else:
+                print(serizalizer.errors)
                 [print(f'Field {k} : {v}') for k , v in serizalizer.errors.items()]
                 return JsonResponse({"error":"Invalid data received"}, status = 400)
         except Exception:

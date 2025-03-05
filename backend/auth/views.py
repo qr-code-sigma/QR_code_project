@@ -21,12 +21,13 @@ def login_view(request):
     password = data.get('password')
 
     user = authenticate(username=username, password=password)
-
+    print(f"User auth: {user}")
     if user is None:
         print("Ivalid credentials")
         return JsonResponse({'details': 'Invalid credentials!'}, status = 400)
 
     login(request, user)
+    print(f"User after login: {request.user}")
     return JsonResponse({'details': 'Login successful!'}, status = 200)
 
 @csrf_exempt

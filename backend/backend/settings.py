@@ -206,8 +206,8 @@ CSP_DEFAULT_SRC = None
 # CSP_IMG_SRC = ("'self'", "data:", "https://qr-code-project-sigma.netlify.app")
 # CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")
 
-SESSION_COOKIE_DOMAIN = 'localhost'
-CSRF_COOKIE_DOMAIN = 'localhost'
+SESSION_COOKIE_DOMAIN = 'qr-code-project.up.railway.app'
+CSRF_COOKIE_DOMAIN = 'qr-code-project.up.railway.app'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db' 
 SESSION_COOKIE_SAMESITE = 'Lax'

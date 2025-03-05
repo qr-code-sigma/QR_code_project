@@ -61,12 +61,7 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CORS_ALLOW_ALL_HEADERS = False
-CORS_ALLOW_ALL_ORIGINS = False
-
-CORS_ALLOWED_ORIGINS = [
-    "https://qr-code-project-sigma.netlify.app",
-    "https://develop--qr-code-project-sigma.netlify.app",  
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

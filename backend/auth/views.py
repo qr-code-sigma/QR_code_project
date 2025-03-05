@@ -63,10 +63,10 @@ def verify_otp(request):
         print(user)
     except Exception:
         print("Invalid code")
-        return JsonResponse({"details":"Invalid data"}, status = 400)
+        return JsonResponse({"details":"Invalid code"}, status = 400)
 
     actual_code = int(cache.get(f"otp_{email}"))
-    print(actual_code)
+    print(f"Actual code: {actual_code}, entered: {code}")
     if int(code) != actual_code:
         return JsonResponse({"verified":False}, status = 400)
     else:
@@ -75,7 +75,6 @@ def verify_otp(request):
         return JsonResponse({"verified":True}, status = 200)
 
 @csrf_exempt
-@require_POST
 def register(request):
     if request.user.is_authenticated:
         print("Already authenticated")
@@ -129,4 +128,4 @@ def get_me(request):
         return JsonResponse(response, status = 200)        
     else:
         print("User not authenticated")
-        return JsonResponse({"error":"User is not authenticated"}, status = 403)
+        return JsonResponse({"details":"User is not authenticated"}, status = 403)

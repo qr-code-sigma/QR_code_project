@@ -118,6 +118,7 @@ def get_csrf_token(request):
 
 @require_GET
 def get_me(request):
+    print(request.user)
     if request.user.is_authenticated:
         user = request.user
         username = user.username
@@ -125,10 +126,13 @@ def get_me(request):
         first_name = user.first_name
         last_name = user.last_name
         response = {
-            "username":username,
-            "email":email,
-            "first_name":first_name,
-            "last_name":last_name
+            "userData": {
+                "username":username,
+                "email":email,
+                "first_name":first_name,
+                 "last_name":last_name
+            },
+            "isAuthenticated": True
         }
         return JsonResponse(response, status = 200)        
     else:

@@ -35,7 +35,12 @@ export const confirmEmail = createAsyncThunk(
     async function({code, email, navigate}, {rejectWithValue}) {
         let response;
         try {
-            response = await axiosInstance.post('/auth/confirm_email', {code, email});
+            response = await axiosInstance.post('/auth/confirm_email', {code, email}, 
+            {
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                }
+            });
         } catch(e) {
             return rejectWithValue(response.status)
         }
@@ -55,6 +60,11 @@ const initialState = {
     status: null,
     error: null
 }
+
+function getCsrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+  }
+  
 
 export const userSlice = createSlice({
     name: 'userSlice',

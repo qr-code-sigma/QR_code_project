@@ -9,7 +9,7 @@ import {useSelector} from "react-redux";
 function Home() {
 
     const { userData, isAuthenticated } = useSelector((state) => state.auth);
-
+    console.log(isAuthenticated)
     return (
         <div className="home-container">
             {isAuthenticated ?

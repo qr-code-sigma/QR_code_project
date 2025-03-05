@@ -16,18 +16,54 @@ from datetime import datetime, timezone
 @require_POST
 def login_view(request):
     data = json.loads(request.body)
-    print(data)
     username = data.get('username')
     password = data.get('password')
-
+    
+    # CRITICAL DEBUGGING PRINT STATEMENTS
+    print("Login Attempt Received")
+    print(f"Username: {username}")
+    
+    # Check authentication mechanism
     user = authenticate(username=username, password=password)
-
+    print(f"Authentication Result: {user}")
+    
     if user is None:
-        print("Ivalid credentials")
-        return JsonResponse({'details': 'Invalid credentials!'}, status = 400)
+        print("Authentication Failed")
+        return JsonResponse({'details': 'Invalid credentials!'}, status=400)
 
-    login(request, user)
-    return JsonResponse({'details': 'Login successful!'}, status = 200)
+    # CRITICAL: Check login process
+    try:
+        login(request, user)
+        print(f"Login Successful for user: {user.username}")
+        print(f"Session Key: {request.session.session_key}")
+        print(f"Session Exists: {request.session.exists(request.session.session_key)}")
+    except Exception as e:
+        print(f"Login Exception: {e}")
+        return JsonResponse({'details': 'Login failed due to internal error'}, status=500)
+
+    # Explicit session creation debugging
+    print(f"Session Data: {request.session.items()}")
+    print(f"Session Cookies: {request.COOKIES}")
+    
+    # Explicitly create and set session cookie
+    response = JsonResponse({
+        'details': 'Login successful!',
+        'session_key': request.session.session_key
+    }, status=200)
+    
+    # Manually set session cookie
+    response.set_cookie(
+        'sessionid', 
+        request.session.session_key, 
+        httponly=True, 
+        samesite='Lax',  # or 'None' if using HTTPS
+        secure=False  # set to True in production with HTTPS
+    )
+    
+    # Additional logging for cookie setting
+    print(f"Set-Cookie Header: {response.headers.get('Set-Cookie', 'No Set-Cookie header')}")
+    
+    return response
 
 @csrf_exempt
 @require_POST
@@ -77,6 +113,9 @@ def verify_otp(request):
         login(request, user)
         print(request.user)
         print(request.user.is_authenticated)
+        print(request.COOKIES.get('sessionid'))
+        request.session.set_expiry(3600)  
+        request.session.save()
         return JsonResponse({"verified":True}, status = 200)
 
 @csrf_exempt
@@ -109,13 +148,13 @@ def register(request):
             return JsonResponse({"details":"User already exists"}, status = 403)
     return JsonResponse({"details":"Invalid method"}, status = 400)
 
-
+@csrf_exempt
 def get_csrf_token(request):
     response = JsonResponse({"csrfToken": get_token(request)})
     response.set_cookie("csrftoken", get_token(request))
     return response
 
-
+@csrf_exempt
 @require_GET
 def get_me(request):
     if request.user.is_authenticated:
@@ -125,10 +164,12 @@ def get_me(request):
         first_name = user.first_name
         last_name = user.last_name
         response = {
-            "username":username,
-            "email":email,
-            "first_name":first_name,
-            "last_name":last_name
+            "userData" : {
+                "username":username,
+                "email":email,
+                "first_name":first_name,
+                "last_name":last_name},
+            "isAuthenticated" : True
         }
         return JsonResponse(response, status = 200)        
     else:

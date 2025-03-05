@@ -194,10 +194,8 @@ PASSWORD_RESET_TIMEOUT = 14400
 
 CACHES = {
     "default": {
-        #"BACKEND": "django.core.cache.backends.redis.RedisCache",
-        #"LOCATION": os.getenv("REDIS_URL"),
-        "LOCATION": "redis://127.0.0.1:6379/1",
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache', 
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": os.getenv("REDIS_URL"), 
     }
 }
 
@@ -207,3 +205,13 @@ CSP_DEFAULT_SRC = None
 # CSP_FONT_SRC = ("'self'", "data:", "https://qr-code-project-sigma.netlify.app")
 # CSP_IMG_SRC = ("'self'", "data:", "https://qr-code-project-sigma.netlify.app")
 # CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")
+
+SESSION_COOKIE_DOMAIN = 'localhost'
+CSRF_COOKIE_DOMAIN = 'localhost'
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db' 
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = False 
+CSRF_COOKIE_SECURE = False 
+SESSION_SAVE_EVERY_REQUEST = True

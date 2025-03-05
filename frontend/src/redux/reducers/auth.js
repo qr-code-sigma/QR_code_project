@@ -5,7 +5,7 @@ export const getMe = createAsyncThunk(
     'user/checkIsAuth',
     async function() {
         const response = await axiosInstance.get('/auth/get_me');
-
+        console.log(response.data)
         return response.data;
     }
 )
@@ -13,15 +13,16 @@ export const getMe = createAsyncThunk(
 export const authMe = createAsyncThunk (
     'user/signIn',
     async function({userData, navigate}, {rejectWithValue}) {
-        const response = await axiosInstance.post('/auth/login', {
-            username: userData.username,
+      console.log(userData)
+        const response = await axiosInstance.post('/auth/login/', {
+            username: userData.userName,
             password: userData.password,
         });
 
         if(response.status === 400) {
             return rejectWithValue(response.data.details)
         }
-
+        
         navigate('/');
 
         return response.data.details;
@@ -64,6 +65,7 @@ export const authSlice = createSlice({
       .addCase(authMe.fulfilled, (state, action) => {
               state.status = 'resolved';
               state.error = null;
+              state.isAuthenticated = true;
       })
   },
 });

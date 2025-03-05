@@ -3,7 +3,7 @@ import "./profilePage.css";
 import ProfileHeader from "../../components/ProfileHeader/ProfileHeader";
 import Footer from "../../components/Footer/Footer.jsx";
 import Events from "../../components/Events/events.jsx";
-import events from "../../test/UserEvents.js";
+import events from "../../tests/UserEvents.js";
 
 function ProfilePage({ status }) {
   const statusClass =

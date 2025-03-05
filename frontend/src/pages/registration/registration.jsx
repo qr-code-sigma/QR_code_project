@@ -111,7 +111,13 @@ function Registration() {
                 </button>
             </section>
             {status === 'loading' && 'loading'}
-            {status === 'rejected' && error}
+            {status === 'rejected' &&
+            Object.values(error).map((error, index) => (
+                <div key={index}>
+                    {error}
+                </div>
+            ))
+            }
         </div>
     );
 }

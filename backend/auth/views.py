@@ -75,7 +75,8 @@ def verify_otp(request):
         print("Valid code, authorizing...")
         user.is_active = True
         login(request, user)
-        print(user)
+        print(request.user)
+        print(request.user.is_authenticated)
         return JsonResponse({"verified":True}, status = 200)
 
 @csrf_exempt

@@ -60,3 +60,4 @@ test_*.xml
 
 config_creator.py
 .env
+Dockerfile

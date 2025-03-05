@@ -1,13 +1,12 @@
 import json
 from django.core.cache import cache
 from django.http import JsonResponse
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.middleware.csrf import get_token
 from api.models import User
 from django.core.mail import EmailMessage
-from django.contrib.auth.tokens import default_token_generator
 from .serializers import UserSerizalizer
 import threading 
 import random 
@@ -16,25 +15,27 @@ import random
 @require_POST
 def login_view(request):
     data = json.loads(request.body)
+    print(data)
     username = data.get('username')
     password = data.get('password')
 
     user = authenticate(username=username, password=password)
 
     if user is None:
-        return JsonResponse({'details': 'Invalid credentials!'})
+        print("Ivalid credentials")
+        return JsonResponse({'details': 'Invalid credentials!'}, status = 400)
 
     login(request, user)
-    return JsonResponse({'details': 'Login successful!'})
+    return JsonResponse({'details': 'Login successful!'}, status = 200)
 
 @csrf_exempt
 @require_POST
 def logout_view(request):
     if not request.user.is_authenticated:
-        return JsonResponse({'details': 'You are not logged in!'})
+        return JsonResponse({'details': 'You are not logged in!'}, status = 403)
 
     logout(request)
-    return JsonResponse({'details': 'Logout successful!'})
+    return JsonResponse({'details': 'Logout successful!'}, status = 200)
 
 def activate_email(request, user, to_email):
     verification_code = random.randint(100000, 999999)
@@ -88,16 +89,20 @@ def register(request):
             print("Bad json could not decode")
             return JsonResponse({"error":"bad request"}, status = 400)
         serizalizer = UserSerizalizer(data=data)
-        if serizalizer.is_valid():
-            user = serizalizer.save()
-            user.is_active = False
-            print(user)
-            email_thread = threading.Thread(target = activate_email, args = [request, user, user.email])
-            email_thread.start()
-            return JsonResponse({"success":"User signed up"}, status = 200)
-        else:
-            [print(f'Field {k} : {v}') for k , v in serizalizer.errors.items()]
-            return JsonResponse({"error":"Invalid data received"}, status = 400)
+        try:
+            if serizalizer.is_valid():
+                user = serizalizer.save()
+                user.is_active = False
+                print(user)
+                email_thread = threading.Thread(target = activate_email, args = [request, user, user.email])
+                email_thread.start()
+                email_thread.join()
+                return JsonResponse({"success":"User signed up"}, status = 200)
+            else:
+                [print(f'Field {k} : {v}') for k , v in serizalizer.errors.items()]
+                return JsonResponse({"error":"Invalid data received"}, status = 400)
+        except Exception:
+            return JsonResponse({"error":"User already exists"})
     return JsonResponse({"error":"Invalid method"})
 
 
@@ -106,4 +111,21 @@ def get_csrf_token(request):
     response.set_cookie("csrftoken", get_token(request))
     return response
 
-
+@require_GET
+def get_me(request):
+    if request.user.is_authenticated:
+        user = request.user
+        username = user.username
+        email = user.email
+        first_name = user.first_name
+        last_name = user.last_name
+        response = {
+            "username":username,
+            "email":email,
+            "first_name":first_name,
+            "last_name":last_name
+        }
+        return JsonResponse(response, status = 200)        
+    else:
+        print("User not authenticated")
+        return JsonResponse({"error":"User is not authenticated"}, status = 403)

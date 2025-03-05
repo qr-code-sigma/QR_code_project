@@ -72,8 +72,10 @@ def verify_otp(request):
     if int(code) != actual_code:
         return JsonResponse({"verified":False}, status = 400)
     else:
+        print("Valid code, authorizing...")
         user.is_active = True
         login(request, user)
+        print(user)
         return JsonResponse({"verified":True}, status = 200)
 
 @csrf_exempt
@@ -103,8 +105,8 @@ def register(request):
                 print(details)
                 return JsonResponse({"details":details}, status = 400)
         except Exception:
-            return JsonResponse({"details":"User already exists"})
-    return JsonResponse({"details":"Invalid method"})
+            return JsonResponse({"details":"User already exists"}, status = 403)
+    return JsonResponse({"details":"Invalid method"}, status = 400)
 
 
 def get_csrf_token(request):

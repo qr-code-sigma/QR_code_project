@@ -19,11 +19,9 @@ def login_view(request):
     username = data.get('username')
     password = data.get('password')
     
-    # CRITICAL DEBUGGING PRINT STATEMENTS
     print("Login Attempt Received")
     print(f"Username: {username}")
     
-    # Check authentication mechanism
     user = authenticate(username=username, password=password)
     print(f"Authentication Result: {user}")
     
@@ -31,7 +29,6 @@ def login_view(request):
         print("Authentication Failed")
         return JsonResponse({'details': 'Invalid credentials!'}, status=400)
 
-    # CRITICAL: Check login process
     try:
         login(request, user)
         print(f"Login Successful for user: {user.username}")
@@ -41,26 +38,21 @@ def login_view(request):
         print(f"Login Exception: {e}")
         return JsonResponse({'details': 'Login failed due to internal error'}, status=500)
 
-    # Explicit session creation debugging
     print(f"Session Data: {request.session.items()}")
     print(f"Session Cookies: {request.COOKIES}")
-    
-    # Explicitly create and set session cookie
+
     response = JsonResponse({
         'details': 'Login successful!',
         'session_key': request.session.session_key
     }, status=200)
-    
-    # Manually set session cookie
+
     response.set_cookie(
         'sessionid', 
         request.session.session_key, 
-        httponly=True, 
-        samesite='Lax',  # or 'None' if using HTTPS
-        secure=False  # set to True in production with HTTPS
+        samesite='None', 
+        secure=True  
     )
     
-    # Additional logging for cookie setting
     print(f"Set-Cookie Header: {response.headers.get('Set-Cookie', 'No Set-Cookie header')}")
     
     return response

@@ -60,8 +60,12 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-CORS_ALLOW_ALL_HEADERS = True
+CORS_ALLOW_ALL_HEADERS = False
+CORS_ALLOW_ALL_ORIGINS = False
 
+CORS_ALLOWED_ORIGINS = [
+    "https://qr-code-project-sigma.netlify.app",
+]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
@@ -180,7 +184,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -210,8 +214,8 @@ SESSION_COOKIE_DOMAIN = 'qr-code-project.up.railway.app'
 CSRF_COOKIE_DOMAIN = 'qr-code-project.up.railway.app'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db' 
-SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SECURE = False 
-CSRF_COOKIE_SECURE = False 
+SESSION_COOKIE_SECURE = True 
+CSRF_COOKIE_SECURE = True 
 SESSION_SAVE_EVERY_REQUEST = True

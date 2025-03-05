@@ -63,12 +63,11 @@ def verify_otp(request):
         print(user)
     except Exception:
         print("Nichogo")
-        return JsonResponse({"error":"Invalid data"}, status = 400)
+        return JsonResponse({"details":"Invalid data"}, status = 400)
 
     actual_code = int(cache.get(f"otp_{email}"))
     print(actual_code)
     if int(code) != actual_code:
-        print("Shos")
         return JsonResponse({"verified":False}, status = 400)
     else:
         user.is_active = True
@@ -80,31 +79,31 @@ def verify_otp(request):
 def register(request):
     if request.user.is_authenticated:
         print("Already authenticated")
-        return JsonResponse({"error":"Already authenticated"}, status = 403)
+        return JsonResponse({"details":"Already authenticated"}, status = 403)
     if request.method == "POST":
         try:
             data = json.loads(request.body)
             print(data)
         except json.JSONDecodeError:
             print("Bad json could not decode")
-            return JsonResponse({"error":"bad request"}, status = 400)
+            return JsonResponse({"details":"Server error"}, status = 500)
         serizalizer = UserSerizalizer(data=data)
         try:
             if serizalizer.is_valid():
-                user = serizalizer.save()
                 user.is_active = False
+                user = serizalizer.save()
                 print(user)
                 email_thread = threading.Thread(target = activate_email, args = [request, user, user.email])
                 email_thread.start()
-                email_thread.join()
+                #email_thread.join()
                 return JsonResponse({"success":"User signed up"}, status = 200)
             else:
-                print(serizalizer.errors)
-                [print(f'Field {k} : {v}') for k , v in serizalizer.errors.items()]
-                return JsonResponse({"error":"Invalid data received"}, status = 400)
+                details = {k : str(v[0]) for k, v in serizalizer.errors.items() }
+                print(details)
+                return JsonResponse({"details":details}, status = 400)
         except Exception:
-            return JsonResponse({"error":"User already exists"})
-    return JsonResponse({"error":"Invalid method"})
+            return JsonResponse({"details":"User already exists"})
+    return JsonResponse({"details":"Invalid method"})
 
 
 def get_csrf_token(request):

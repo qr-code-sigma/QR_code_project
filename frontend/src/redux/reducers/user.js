@@ -13,9 +13,9 @@ export const createUser = createAsyncThunk(
             username: user.userName
         });
 
-        if(response.status > 200) {
+        if(response.status >= 400) {
             console.log("Rejected")
-            return rejectWithValue(response.status)
+            return rejectWithValue(response.data.details)
         }
         console.log("Navigating to email")
         navigate('/confirmEmail', { state: { email: user.email } })
@@ -66,20 +66,7 @@ export const userSlice = createSlice({
             .addCase(createUser.rejected, (state, action) => {
                 state.status = 'rejected';
 
-                switch (action.payload) {
-                    case 403: {
-                        state.error = 'User already exists'
-                        break;
-                    }
-                    case 400: {
-                        state.error = 'Validation error'
-                        break;
-                    }
-                    default: {
-                        state.error = 'Server error'
-                        break;
-                    }
-                }
+                state.error = action.payload;
             })
             .addCase(confirmEmail.pending, (state) => {
                 state.status = 'loading';

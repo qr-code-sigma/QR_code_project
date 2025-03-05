@@ -15,6 +15,7 @@ from rest_framework.pagination import PageNumberPagination
 
 def base(request):
     return HttpResponse("<h1>Hello</h1>")
+
 @api_view(['GET', 'POST'])
 def event_list(request):
     if request.method == "GET":
@@ -37,6 +38,7 @@ def event_list(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 @api_view(['GET','PUT', 'DELETE', 'PATCH'])
 def event_detail(request, id):
     try:

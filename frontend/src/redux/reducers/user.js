@@ -14,9 +14,10 @@ export const createUser = createAsyncThunk(
         });
 
         if(response.status > 200) {
+            console.log("Rejected")
             return rejectWithValue(response.status)
         }
-
+        console.log("Navigating to email")
         navigate('/confirmEmail', { state: { email: user.email } })
 
         return true;

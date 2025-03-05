@@ -62,3 +62,4 @@ test_*.xml
 config_creator.py
 .env
 frontend/src/test/
+Dockerfile

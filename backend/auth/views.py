@@ -9,7 +9,8 @@ from api.models import User
 from django.core.mail import EmailMessage
 from .serializers import UserSerizalizer
 import threading 
-import random 
+import random
+from datetime import datetime, timezone
 
 @csrf_exempt
 @require_POST
@@ -43,10 +44,11 @@ def activate_email(request, user, to_email):
     cache.set(f"otp_{id_}", verification_code, timeout=5000)
     print("Sending email...")
     email_subject = "Account Activation"
+    current_time = datetime.now(timezone.utc)
     message = f"""
     Hi {user.username},
     Thank you for registering! Your verification code: {verification_code}
-    If you did not request this, please ignore this email.
+    If you did not request this, please ignore this email. This email was sent at {current_time}, UTC+0
     """
     email = EmailMessage(email_subject, message, to=[to_email])
     if email.send():

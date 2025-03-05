@@ -1,15 +1,32 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../config/axiosConfig.js";
 
-export const getMe = createAsyncThunk("user/create", async function ({ user }) {
-  const response = await axiosInstance.get("/getMe");
+export const getMe = createAsyncThunk("user/checkIsAuth", async function () {
+  const response = await axiosInstance.get("/auth/get_me");
 
   return response.data;
 });
 
+export const authMe = createAsyncThunk(
+  "user/signIn",
+  async function ({ userData, navigate }, { rejectWithValue }) {
+    const response = await axiosInstance.post("/auth/login", {
+      username: userData.username,
+      password: userData.password,
+    });
+
+    if (response.status === 400) {
+      return rejectWithValue(response.data.details);
+    }
+
+    navigate("/");
+    return response.data.details;
+  },
+);
+
 const initialState = {
   userData: {},
-  isAuthenticated: true,
+  isAuthenticated: false,
   status: null,
 };
 
@@ -26,10 +43,6 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getMe.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
       .addCase(getMe.fulfilled, (state, action) => {
         state.status = "resolved";
         state.isAuthenticated = action.payload.isAuthenticated;
@@ -39,7 +52,15 @@ export const authSlice = createSlice({
           state.userData = {};
         }
       })
-      .addCase(getMe.rejected, setError);
+      .addCase(getMe.rejected, setError)
+      .addCase(authMe.pending, (state, action) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(authMe.fulfilled, (state, action) => {
+        state.status = "resolved";
+        state.error = null;
+      });
   },
 });
 

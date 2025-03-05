@@ -4,11 +4,15 @@ import {AddEvent, EventInfo, Home, Profile, QrCode, Settings} from './pages/inde
 import ProtectedRoutes from './utils/ProtectedRoutes.jsx'
 import Registration from "./pages/registration/registration.jsx";
 import ConfirmEmail from "./pages/confirmEmail/confirmEmail.jsx";
+import {useDispatch} from "react-redux";
+import { getMe } from "./redux/reducers/auth.js";
+import Authorization from "./pages/authorization/authorization.jsx";
 
 function App() {
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        //getMe
+        dispatch(getMe());
     }, []);
 
     return (
@@ -16,6 +20,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home/>}/>
                 <Route path="/qr-code" element={<QrCode/>}/>
+                <Route path="/authorization" element={<Authorization/>}/>
                 <Route path="/registration" element={<Registration/>}/>
                 <Route path="/confirmEmail" element={<ConfirmEmail/>}/>
 

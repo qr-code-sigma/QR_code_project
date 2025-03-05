@@ -2,6 +2,7 @@ import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import { createUser } from '../../redux/reducers/user.js'
+import useDisabledButton from "../../hooks/useDisabledButton.js";
 
 function Registration() {
     const dispatch = useDispatch();
@@ -17,30 +18,13 @@ function Registration() {
         confirmPassword: ''
     })
 
-    const [isDisabled, setIsDisabled] = React.useState(true);
+    const isDisabled = useDisabledButton(formData);
 
     const onSubmit = (e) => {
         e.preventDefault()
 
         dispatch(createUser({user: formData, navigate}))
     }
-
-    useEffect(() => {
-        let isSatisfactory = true;
-
-        Object.values(formData).forEach((item) => {
-            if(item.length === 0) {
-                isSatisfactory = false;
-            }
-        })
-
-        if(isSatisfactory) {
-            setIsDisabled(false);
-        } else {
-            setIsDisabled(true);
-        }
-        console.log(isDisabled)
-    }, [formData])
 
     const onChangeInput = (e) => {
         setFormData((prev) => ({

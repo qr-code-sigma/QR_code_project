@@ -9,7 +9,8 @@ from api.models import User
 from django.core.mail import EmailMessage
 from .serializers import UserSerizalizer
 import threading 
-import random 
+import random
+from datetime import datetime, timezone
 
 @csrf_exempt
 @require_POST
@@ -43,10 +44,11 @@ def activate_email(request, user, to_email):
     cache.set(f"otp_{id_}", verification_code, timeout=5000)
     print("Sending email...")
     email_subject = "Account Activation"
+    current_time = datetime.now(timezone.utc)
     message = f"""
     Hi {user.username},
     Thank you for registering! Your verification code: {verification_code}
-    If you did not request this, please ignore this email.
+    If you did not request this, please ignore this email. This email was sent at {current_time}, UTC+0
     """
     email = EmailMessage(email_subject, message, to=[to_email])
     if email.send():
@@ -62,11 +64,11 @@ def verify_otp(request):
         user = User.objects.get(email = email)
         print(user)
     except Exception:
-        print("Nichogo")
-        return JsonResponse({"details":"Invalid data"}, status = 400)
+        print("Invalid code")
+        return JsonResponse({"details":"Invalid code"}, status = 400)
 
     actual_code = int(cache.get(f"otp_{email}"))
-    print(actual_code)
+    print(f"Actual code: {actual_code}, entered: {code}")
     if int(code) != actual_code:
         return JsonResponse({"verified":False}, status = 400)
     else:
@@ -75,7 +77,6 @@ def verify_otp(request):
         return JsonResponse({"verified":True}, status = 200)
 
 @csrf_exempt
-@require_POST
 def register(request):
     if request.user.is_authenticated:
         print("Already authenticated")
@@ -90,8 +91,8 @@ def register(request):
         serizalizer = UserSerizalizer(data=data)
         try:
             if serizalizer.is_valid():
-                user.is_active = False
                 user = serizalizer.save()
+                user.is_active = False
                 print(user)
                 email_thread = threading.Thread(target = activate_email, args = [request, user, user.email])
                 email_thread.start()
@@ -111,6 +112,7 @@ def get_csrf_token(request):
     response.set_cookie("csrftoken", get_token(request))
     return response
 
+
 @require_GET
 def get_me(request):
     if request.user.is_authenticated:
@@ -128,4 +130,4 @@ def get_me(request):
         return JsonResponse(response, status = 200)        
     else:
         print("User not authenticated")
-        return JsonResponse({"error":"User is not authenticated"}, status = 403)
+        return JsonResponse({"details":"User is not authenticated"}, status = 403)

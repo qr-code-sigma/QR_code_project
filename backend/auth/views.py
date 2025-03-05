@@ -96,12 +96,12 @@ def register(request):
                 print(user)
                 email_thread = threading.Thread(target = activate_email, args = [request, user, user.email])
                 email_thread.start()
-                email_thread.join()
+                #email_thread.join()
                 return JsonResponse({"success":"User signed up"}, status = 200)
             else:
-                print(serizalizer.errors)
-                [print(f'Field {k} : {v}') for k , v in serizalizer.errors.items()]
-                return JsonResponse({"error":"Invalid data received"}, status = 400)
+                details = {k : v for k, v in serizalizer.errors.items() }
+                print(details)
+                return JsonResponse({"details":details}, status = 400)
         except Exception:
             return JsonResponse({"error":"User already exists"})
     return JsonResponse({"error":"Invalid method"})

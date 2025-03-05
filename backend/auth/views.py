@@ -62,7 +62,7 @@ def verify_otp(request):
         user = User.objects.get(email = email)
         print(user)
     except Exception:
-        print("Nichogo")
+        print("Invalid code")
         return JsonResponse({"details":"Invalid data"}, status = 400)
 
     actual_code = int(cache.get(f"otp_{email}"))
@@ -90,8 +90,8 @@ def register(request):
         serizalizer = UserSerizalizer(data=data)
         try:
             if serizalizer.is_valid():
-                user.is_active = False
                 user = serizalizer.save()
+                user.is_active = False
                 print(user)
                 email_thread = threading.Thread(target = activate_email, args = [request, user, user.email])
                 email_thread.start()
@@ -110,6 +110,7 @@ def get_csrf_token(request):
     response = JsonResponse({"csrfToken": get_token(request)})
     response.set_cookie("csrftoken", get_token(request))
     return response
+
 
 @require_GET
 def get_me(request):

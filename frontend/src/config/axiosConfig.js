@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'https://qr-code-project-sigma.netlify.app/api/v1/',
+    baseURL: 'https://qr-code-project.up.railway.app/api/v1/',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -25,7 +25,7 @@ instance.interceptors.request.use(
 
 function getCsrfToken() {
     if (!document.querySelector('meta[name="csrf-token"]')) {
-      axios.get('https://qr-code-project-sigma.netlify.app/api/v1/auth/csrf-token', { withCredentials: true })
+      axios.get('https://qr-code-project.up.railway.app/api/v1/auth/csrf-token', { withCredentials: true })
         .then(response => {
           const csrfToken = response.data.csrfToken;
           const metaTag = document.createElement('meta');

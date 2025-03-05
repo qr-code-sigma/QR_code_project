@@ -12,12 +12,13 @@ export const getMe = createAsyncThunk(
 
 export const authMe = createAsyncThunk (
     'user/signIn',
-    async function({userData}) {
+    async function({userData, navigate}) {
         const response = await axiosInstance.post('/auth/login', {
             username: userData.username,
             password: userData.password,
         });
 
+        navigate('/');
         return response.data;
     }
 )
@@ -60,12 +61,7 @@ export const authSlice = createSlice({
             })
             .addCase(authMe.fulfilled, (state, action) => {
                 state.status = 'resolved';
-                state.isAuthenticated = action.payload.isAuthenticated;
-                if(action.payload.isAuthenticated) {
-                    state.userData = action.payload.userData;
-                } else {
-                    state.userData = {};
-                }
+                state.error = null;
             })
     },
 })

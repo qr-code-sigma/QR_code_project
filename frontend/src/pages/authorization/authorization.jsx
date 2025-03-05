@@ -1,8 +1,8 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import { createUser } from '../../redux/reducers/user.js'
 import useDisabledButton from "../../hooks/useDisabledButton.js";
+import {authMe} from "../../redux/reducers/auth.js";
 
 function Authorization() {
     const dispatch = useDispatch();
@@ -19,7 +19,7 @@ function Authorization() {
     const onSubmit = (e) => {
         e.preventDefault()
 
-        dispatch(createUser({user: formData, navigate}))
+        dispatch(authMe({userData: formData, navigate}))
     }
 
     const onChangeInput = (e) => {

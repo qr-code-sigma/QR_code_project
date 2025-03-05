@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Welcome from "../../components/Welcome/Welcome";
 import Footer from "../../components/Footer/Footer";
 import "./home.css";
@@ -17,7 +17,7 @@ function Home() {
                     <Header/>
                     <div className='events-container'>
                         {userData.status === 'admin' && <button>Add new</button>}
-                        <Events  />
+                        <Events />
                     </div>
                 </> :
                 <div className="content">

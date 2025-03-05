@@ -65,7 +65,9 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
     "https://qr-code-project-sigma.netlify.app",
+    "https://develop--qr-code-project-sigma.netlify.app",  
 ]
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
@@ -210,8 +212,9 @@ CSP_DEFAULT_SRC = None
 # CSP_IMG_SRC = ("'self'", "data:", "https://qr-code-project-sigma.netlify.app")
 # CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")
 
-SESSION_COOKIE_DOMAIN = 'qr-code-project.up.railway.app'
-CSRF_COOKIE_DOMAIN = 'qr-code-project.up.railway.app'
+SESSION_COOKIE_DOMAIN = None
+CSRF_COOKIE_DOMAIN = None
+
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db' 
 SESSION_COOKIE_SAMESITE = 'None'
@@ -219,3 +222,7 @@ CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SECURE = True 
 CSRF_COOKIE_SECURE = True 
 SESSION_SAVE_EVERY_REQUEST = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://qr-code-project.up.railway.app"
+]

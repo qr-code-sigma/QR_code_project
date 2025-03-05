@@ -47,6 +47,11 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getMe.pending, (state) => {
+          console.log("Here")
+          state.status = 'loading';
+          state.error = null;
+      })
       .addCase(getMe.fulfilled, (state, action) => {
         state.status = "resolved";
         state.isAuthenticated = action.payload.isAuthenticated;

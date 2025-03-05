@@ -98,7 +98,7 @@ def register(request):
                 #email_thread.join()
                 return JsonResponse({"success":"User signed up"}, status = 200)
             else:
-                details = {k : v[0] for k, v in serizalizer.errors.items() }
+                details = {k : str(v[0]) for k, v in serizalizer.errors.items() }
                 print(details)
                 return JsonResponse({"details":details}, status = 400)
         except Exception:

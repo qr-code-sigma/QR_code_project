@@ -5,7 +5,7 @@ export const getMe = createAsyncThunk(
     'user/checkIsAuth',
     async function() {
         const response = await axiosInstance.get('/auth/get_me');
-
+        console.log(response.data)
         return response.data;
     }
 )
@@ -13,8 +13,8 @@ export const getMe = createAsyncThunk(
 export const authMe = createAsyncThunk (
     'user/signIn',
     async function({userData, navigate}, {rejectWithValue}) {
-        const response = await axiosInstance.post('/auth/login', {
-            username: userData.username,
+        const response = await axiosInstance.post('/auth/login/', {
+            username: userData.userName,
             password: userData.password,
         });
 

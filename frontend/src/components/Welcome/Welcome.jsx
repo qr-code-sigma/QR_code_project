@@ -9,6 +9,10 @@ function Welcome() {
         navigate("/registration");
     }
 
+    const navigateToAuthorization = () => {
+        navigate("/authorization");
+    }
+
     return (
         <main className="main-welcome-page">
             <h1>Welcome</h1>
@@ -25,7 +29,7 @@ function Welcome() {
                 <button onClick={navigateToRegistration} className="btn-default">
                     <span>Sign Up</span>
                 </button>
-                <button className="btn-primary">
+                <button onClick={navigateToAuthorization} className="btn-primary">
                     <span>Sign In</span>
                 </button>
             </div>

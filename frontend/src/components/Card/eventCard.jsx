@@ -11,7 +11,7 @@ function EventCard({
   date,
   status,
   places,
-  current_people,
+  count: current_people,
 }) {
   const navigate = useNavigate();
 
@@ -35,6 +35,8 @@ function EventCard({
       },
     });
   };
+
+  console.log(`Current people in eventCard file: ${current_people}`);
 
   return (
     <button className={cardClass} onClick={toEventDetail}>

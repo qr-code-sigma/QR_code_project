@@ -21,8 +21,9 @@ function Home() {
 
   const fetchEvents = async (url) => {
     setLoading(true);
+    let response;
     try {
-      const response = await axiosInstance.get(url);
+      response = await axiosInstance.get(url);
       const { count, next, previous, results } = response.data;
       setAmountOfPages(Math.ceil(count / 50));
       setEvents(results);

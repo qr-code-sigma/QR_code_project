@@ -1,6 +1,6 @@
 import json
 
-from api.models import User
+from api.models import User, Event, UserEvent
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.core.exceptions import ObjectDoesNotExist
@@ -25,6 +25,23 @@ def get_users(request):
     users = User.objects.all()
     user_list = [{"username":user.username, "first_name":user.first_name, "last_name":user.last_name} for user in users]
     return JsonResponse({"users":user_list}, status = 200)
+
+@require_POST
+def event_registration_view(request, event_id):
+    try:
+        event = Event.objects.get(id=event_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({ "error" : "Event does not exist" }, status = 404)
+
+    user = request.user
+
+    if UserEvent.objects.filter(event=event, user=user).exists():
+        return JsonResponse({ "error" : "You are already registered for this event." }, status = 400)
+
+    user_event = UserEvent.objects.create(event=event, user=user)
+    user_event.save()
+
+    return JsonResponse({ "details" : "Successfully registered for the event." }, status = 200)
 
 @require_POST
 def edit_user_view(request, id):

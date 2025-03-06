@@ -1,3 +1,4 @@
+import React from "react";
 import Welcome from "../../components/Welcome/Welcome";
 import Footer from "../../components/Footer/Footer";
 import "./home.css";

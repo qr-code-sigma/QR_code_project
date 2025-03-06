@@ -3,15 +3,15 @@ import axiosInstance from "../../config/axiosConfig.js";
 
 export const getMe = createAsyncThunk("user/checkIsAuth", async function () {
   const response = await axiosInstance.get("/auth/get_me");
-
+  console.log(response.data);
   return response.data;
 });
 
 export const authMe = createAsyncThunk(
   "user/signIn",
   async function ({ userData, navigate }, { rejectWithValue }) {
-    const response = await axiosInstance.post("/auth/login", {
-      username: userData.username,
+    const response = await axiosInstance.post("/auth/login/", {
+      username: userData.userName,
       password: userData.password,
     });
 
@@ -20,13 +20,14 @@ export const authMe = createAsyncThunk(
     }
 
     navigate("/");
+
     return response.data.details;
   },
 );
 
 const initialState = {
   userData: {},
-  isAuthenticated: true,
+  isAuthenticated: false,
   status: null,
 };
 
@@ -43,6 +44,10 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getMe.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
       .addCase(getMe.fulfilled, (state, action) => {
         state.status = "resolved";
         state.isAuthenticated = action.payload.isAuthenticated;

@@ -8,8 +8,9 @@ from django.middleware.csrf import get_token
 from api.models import User
 from django.core.mail import EmailMessage
 from .serializers import UserSerizalizer
-import threading 
-import random 
+import threading
+import random
+from datetime import datetime, timezone
 
 @csrf_exempt
 @require_POST
@@ -20,12 +21,13 @@ def login_view(request):
     password = data.get('password')
 
     user = authenticate(username=username, password=password)
-
+    print(f"User auth: {user}")
     if user is None:
         print("Ivalid credentials")
         return JsonResponse({'details': 'Invalid credentials!'}, status = 400)
 
     login(request, user)
+    print(f"User after login: {request.user}")
     return JsonResponse({'details': 'Login successful!'}, status = 200)
 
 @csrf_exempt
@@ -43,10 +45,11 @@ def activate_email(request, user, to_email):
     cache.set(f"otp_{id_}", verification_code, timeout=5000)
     print("Sending email...")
     email_subject = "Account Activation"
+    current_time = datetime.now(timezone.utc)
     message = f"""
     Hi {user.username},
     Thank you for registering! Your verification code: {verification_code}
-    If you did not request this, please ignore this email.
+    If you did not request this, please ignore this email. This email was sent at {current_time}, UTC+0
     """
     email = EmailMessage(email_subject, message, to=[to_email])
     if email.send():
@@ -63,19 +66,21 @@ def verify_otp(request):
         print(user)
     except Exception:
         print("Invalid code")
-        return JsonResponse({"details":"Invalid data"}, status = 400)
+        return JsonResponse({"details":"Invalid code"}, status = 400)
 
     actual_code = int(cache.get(f"otp_{email}"))
-    print(actual_code)
+    print(f"Actual code: {actual_code}, entered: {code}")
     if int(code) != actual_code:
         return JsonResponse({"verified":False}, status = 400)
     else:
+        print("Valid code, authorizing...")
         user.is_active = True
         login(request, user)
+        print(request.user)
+        print(request.user.is_authenticated)
         return JsonResponse({"verified":True}, status = 200)
 
 @csrf_exempt
-@require_POST
 def register(request):
     if request.user.is_authenticated:
         print("Already authenticated")
@@ -102,8 +107,8 @@ def register(request):
                 print(details)
                 return JsonResponse({"details":details}, status = 400)
         except Exception:
-            return JsonResponse({"details":"User already exists"})
-    return JsonResponse({"details":"Invalid method"})
+            return JsonResponse({"details":"User already exists"}, status = 403)
+    return JsonResponse({"details":"Invalid method"}, status = 400)
 
 
 def get_csrf_token(request):
@@ -114,6 +119,7 @@ def get_csrf_token(request):
 
 @require_GET
 def get_me(request):
+    print(request.user)
     if request.user.is_authenticated:
         user = request.user
         username = user.username
@@ -121,12 +127,15 @@ def get_me(request):
         first_name = user.first_name
         last_name = user.last_name
         response = {
-            "username":username,
-            "email":email,
-            "first_name":first_name,
-            "last_name":last_name
+            "userData": {
+                "username":username,
+                "email":email,
+                "first_name":first_name,
+                "last_name":last_name
+            },
+            "isAuthenticated": True
         }
-        return JsonResponse(response, status = 200)        
+        return JsonResponse(response, status = 200)
     else:
         print("User not authenticated")
-        return JsonResponse({"error":"User is not authenticated"}, status = 403)
+        return JsonResponse({"details":"User is not authenticated"}, status = 403)

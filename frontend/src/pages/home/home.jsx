@@ -46,7 +46,7 @@ function Home() {
       const savedPage = localStorage.getItem("CURRENT_PAGE") || 1;
       setPage(parseInt(savedPage));
       fetchEvents(
-        `${import.meta.env.VITE_API_URL}/api/v1/events?page=${savedPage}`,
+        `/events?page=${savedPage}`,
       );
     }
   }, [isAuthenticated]);

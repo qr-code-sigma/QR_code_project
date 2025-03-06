@@ -95,7 +95,11 @@ def event_detail(request, id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+@api_view(['GET'])
+def events_by_pattern(request, pattern):
+    events = Event.objects.filter(name__contains=pattern)
+    serializer = EventSerializer(events, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 

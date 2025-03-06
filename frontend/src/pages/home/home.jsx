@@ -15,6 +15,7 @@ function Home() {
   const [amountOfPages, setAmountOfPages] = useState(1);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [nextPageURL, setNextPageURL] = useState(null);
   const [previousPageURL, setPreviousPageURL] = useState(null);
 
@@ -29,6 +30,7 @@ function Home() {
       setNextPageURL(next);
       setPreviousPageURL(previous);
     } catch (error) {
+      setError(error)
       console.error(error);
     } finally {
       setLoading(false);
@@ -70,7 +72,8 @@ function Home() {
             <Events events={events} />
           </div>
 
-          {!loading ? (
+          {loading ? <div>Loading...</div> :
+              !error ? (
             <>
               <button
                 hidden={!previousPageURL}
@@ -88,9 +91,8 @@ function Home() {
                 Page {page} of {amountOfPages}
               </h3>
             </>
-          ) : (
-            "Loading...."
-          )}
+          ) : <div>{error}</div>
+          }
         </>
       ) : (
         <div className="content">

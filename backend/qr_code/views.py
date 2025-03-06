@@ -14,7 +14,7 @@ def get_qr(request, event_id):
     try:
         event_user = UserEvent.objects.get(event_id = event_id, user_id = request.user.id)
     except Exception:
-        return JsonResponse({"details":"User is not registered for this event"}, status = 200) 
+        return JsonResponse({"details":"User is not registered for this event", "isRegistered":False}, status = 200) 
     print(f"Creating a QR code for invitaion {event_user} for user {request.user.id} on event {event_id}")
     try:
         qr = qrcode.QRCode( 

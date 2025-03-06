@@ -1,7 +1,7 @@
 from .models import Event
 from .serializers import EventSerializer
 from rest_framework.decorators import api_view
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
@@ -26,11 +26,11 @@ def event_list(request):
                 filters &= Q(**{key: value})
         events = events.filter(filters)
         events = events.order_by('id')
+        events = events.annotate(count=Count('userevent__user'))
         paginator = PageNumberPagination()
         paginator.page_size = 50
         paginated_events = paginator.paginate_queryset(events, request)
         serializer = EventSerializer(paginated_events, many=True)
-
         response = paginator.get_paginated_response(serializer.data)
 
         if response.data.get("next"):
@@ -41,11 +41,11 @@ def event_list(request):
 
         print(response.data)
         return response
-
     elif request.method == "POST":
         serializer = EventSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     

@@ -8,24 +8,26 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 @require_POST 
-def get_qr(request, event_id): 
-    try: 
-        print(request.user)
-        print(request.user.is_authenticated)
-        print(request.user.id)
-        event_user = UserEvent.objects.get(event_id = event_id, user_id = request.user.id) 
-        print(f"Creating a QR code for invitaion {event_user} for user {request.user.id} on event {event_id}")
+def get_qr(request, event_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({"details":"User not authenticated"}, status = 401)
+    try:
+        event_user = UserEvent.objects.get(event_id = event_id, user_id = request.user.id)
+    except Exception:
+        return JsonResponse({"details":"User is not registered for this event"}, status = 200) 
+    print(f"Creating a QR code for invitaion {event_user} for user {request.user.id} on event {event_id}")
+    try:
         qr = qrcode.QRCode( 
             version=1,  
             error_correction=qrcode.constants.ERROR_CORRECT_L, 
             box_size=10, 
             border = 4) 
-        qr.add_data(f'https://qr-code-project.up.railway.app/qr_page/{event_user.id}') 
-        code = qr.get_matrix() 
-        print(f"Code: {code}") #temporary
-        return JsonResponse({"code":code}, status = 200) 
-    except Exception: 
-        return JsonResponse({"details":"Cound not create QR code"}, status = 404) 
+        qr.add_data(f'https://qr-code-project.up.railway.app/qr_page/{event_user.id}')
+    except Exception:
+        return JsonResponse({"Coul not create a QR code"}, status = 500) 
+    code = qr.get_matrix() 
+    print(f"Code: {code}") #temporary
+    return JsonResponse({"code":code}, status = 200) 
     
 
 @require_GET

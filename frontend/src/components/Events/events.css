@@ -1,0 +1,12 @@
+.events-main-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 156px;
+    gap: 26px;
+    justify-content: center;
+    align-items: start;
+    margin-top: 42px;
+    margin-bottom: 42px;
+    width: 480px;
+}

@@ -8,3 +8,7 @@ pytz
 sqlparse
 psycopg2-binary
 python-dotenv
+django-redis
+django-csp
+qrcode
+gunicorn==23.0.0

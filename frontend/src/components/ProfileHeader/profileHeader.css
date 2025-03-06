@@ -1,0 +1,25 @@
+.profile-header {
+    display: flex;
+    align-items: center;
+    height: 100px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    position: fixed;
+    top: 0;
+    z-index: 10;
+}
+
+.profile-header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    width: 100%;
+    gap: 75px;
+}
+
+.profile-header-text {
+    font-size: 40px;
+    color: var(--text-color);
+    margin: 0;
+}

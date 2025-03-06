@@ -1,0 +1,73 @@
+.settings-dialog {
+    width: 375px;
+    height: auto;
+    padding: 24px;
+    background-color: var(--btn-download);
+    border: 2px solid black;
+    border-radius: 10px;
+    box-shadow: 4px 4px 0px black;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.settings-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.settings-header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.settings-header p {
+    font-size: 14px;
+    margin: 0;
+}
+
+.settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.settings-row label {
+    flex: 1;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.settings-row input {
+    flex: 3;
+    padding: 8px;
+    border: 2px solid black;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.settings-row div {
+    flex: 3;
+
+}
+
+.settings-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}

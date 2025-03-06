@@ -8,27 +8,25 @@ class Event(models.Model):
     places = models.IntegerField()
     location = models.CharField(max_length=100)
     date = models.DateField()
+    status = models.CharField(max_length=20)
 
     class Meta:
         db_table = "events"
-        managed = False
-
 
 class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    email = models.CharField(max_length=90, unique=True)
+    email = models.EmailField(max_length=90, unique=True)
     password = models.CharField(max_length=100)
     status = models.CharField(
         max_length=10,
         choices=[('admin', 'Admin'), ('guest', 'Guest'), ('employee', 'Employee')]
     )
-    class Meta:
-        db_table = "users"
-        unique_together = ('first_name', 'last_name')
-        managed = False
 
+    class Meta:
+        unique_together = ('first_name', 'last_name')
+        db_table = "users"
 
 class UserEvent(models.Model):
     id = models.AutoField(primary_key=True)
@@ -36,6 +34,5 @@ class UserEvent(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "user_event"
         unique_together = ('user', 'event')
-        managed = False
+        db_table = "user_events"

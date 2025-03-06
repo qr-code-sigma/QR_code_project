@@ -1,0 +1,23 @@
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    width: 100%;
+    background-color: var(--background-color);
+    padding: 24px 150px;
+}
+
+.footer p {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.footer a {
+    color: var(--text-color);
+}
+
+.footer a:visited {
+    color: var(--text-color);
+}

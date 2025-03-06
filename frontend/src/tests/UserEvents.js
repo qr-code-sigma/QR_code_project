@@ -1,0 +1,66 @@
+const events = [
+  {
+    id: 1,
+    title: "Tech Conference",
+    description:
+      "A gathering of tech innovators and experts to share the latest industry trends.",
+    location: "Kyiv, Street 15",
+    date: "22.05.2025",
+    status: "Public",
+    current_people: 32,
+    places: 100,
+  },
+  {
+    id: 2,
+    title: "Private Meeting",
+    description: "A private meeting for board members.",
+    location: "Secret Office, Room 101",
+    date: "23.05.2025",
+    status: "Private",
+    current_people: 0,
+    places: 100,
+  },
+  {
+    id: 3,
+    title: "Startup Pitch",
+    description: "Present your startup ideas to a panel of investors.",
+    location: "Innovation Hub, Lviv",
+    date: "25.05.2025",
+    status: "Public",
+    current_people: 0,
+    places: 100,
+  },
+  {
+    id: 4,
+    title: "Tech Conference",
+    description:
+      "A gathering of tech innovators and experts to share the latest industry trends.",
+    location: "Kyiv, Street 15",
+    date: "22.05.2025",
+    status: "Public",
+    current_people: 210,
+    places: 300,
+  },
+  {
+    id: 5,
+    title: "Private Meeting",
+    description: "A private meeting for board members.",
+    location: "Secret Office, Room 101",
+    date: "23.05.2025",
+    status: "Private",
+    current_people: 3,
+    places: 100,
+  },
+  {
+    id: 6,
+    title: "Startup Pitch",
+    description: "Present your startup ideas to a panel of investors.",
+    location: "Innovation Hub, Lviv",
+    date: "25.05.2025",
+    status: "Public",
+    current_people: 34,
+    places: 150,
+  },
+];
+
+export default events;

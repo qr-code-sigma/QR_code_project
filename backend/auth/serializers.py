@@ -34,5 +34,5 @@ class UserSerizalizer(serializers.ModelSerializer):
         
             return user
         except Exception:
-            print("User already exsists")
-            raise serializers.ValidationError({"lol":"loooool"})
+            print("User already exists")
+            raise serializers.ValidationError({"error":"Could not create user"})

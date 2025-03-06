@@ -3,8 +3,11 @@ import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.core.cache import cache
+from django.http import JsonResponse
+from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.middleware.csrf import get_token
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -12,71 +15,110 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.contrib import messages
 from django.contrib.auth.tokens import default_token_generator
+from api.models import User, UserEvent
+from django.core.mail import EmailMessage
 from .serializers import UserSerizalizer
+import threading
+import random
+from datetime import datetime, timezone
 
 @csrf_exempt
 @require_POST
 def login_view(request):
     data = json.loads(request.body)
+    print(data)
     username = data.get('username')
     password = data.get('password')
 
     user = authenticate(username=username, password=password)
-
+    print(f"User auth: {user}")
     if user is None:
-        return JsonResponse({'details': 'Invalid credentials!'})
+        print("Ivalid credentials")
+        return JsonResponse({'details': 'Invalid credentials!'}, status = 400)
 
     login(request, user)
-    return JsonResponse({'details': 'Login successful!'})
+    print(f"User after login: {request.user}")
+    return JsonResponse({'details': 'Login successful!'}, status = 200)
 
 @csrf_exempt
 @require_POST
 def logout_view(request):
     if not request.user.is_authenticated:
-        return JsonResponse({'details': 'You are not logged in!'})
+        return JsonResponse({'details': 'You are not logged in!'}, status = 403)
 
     logout(request)
-    return JsonResponse({'details': 'Logout successful!'})
+    return JsonResponse({'details': 'Logout successful!'}, status = 200)
 
 def activate_email(request, user, to_email):
+    verification_code = random.randint(100000, 999999)
+    id_ = user.email
+    cache.set(f"otp_{id_}", verification_code, timeout=5000)
     print("Sending email...")
     email_subject = "Account Activation"
-    activation_link = f"{'https' if request.is_secure() else 'http'}://{get_current_site(request).domain}/api/v1/auth/activate/{urlsafe_base64_encode(force_bytes(user.pk))}/{default_token_generator.make_token(user)}"
+    current_time = datetime.now(timezone.utc)
     message = f"""
     Hi {user.username},
-    Thank you for registering! Please activate your account by clicking the link below:
-    {activation_link}
-    If you did not request this, please ignore this email.
+    Thank you for registering! Your verification code: {verification_code}
+    If you did not request this, please ignore this email. This email was sent at {current_time}, UTC+0
     """
-    messages.success(request, "Thank you for registration! Please confirm your email by clicking the activation link we sent!")
-    
     email = EmailMessage(email_subject, message, to=[to_email])
     if email.send():
         print("Email sent")
 
+@require_POST
+@csrf_exempt
+def verify_otp(request):
+    data = json.loads(request.body)
+    try:
+        code = data.get('code')
+        email = data.get('email')
+        user = User.objects.get(email = email)
+        print(user)
+    except Exception:
+        print("Invalid code")
+        return JsonResponse({"details":"Invalid code"}, status = 400)
+
+    actual_code = int(cache.get(f"otp_{email}"))
+    print(f"Actual code: {actual_code}, entered: {code}")
+    if int(code) != actual_code:
+        return JsonResponse({"verified":False}, status = 400)
+    else:
+        print("Valid code, authorizing...")
+        user.is_active = True
+        login(request, user)
+        print(request.user)
+        print(request.user.is_authenticated)
+        return JsonResponse({"verified":True}, status = 200)
 
 @csrf_exempt
 def register(request):
     if request.user.is_authenticated:
         print("Already authenticated")
-        return JsonResponse({"error":"Already authenticated"}, status = 403)
+        return JsonResponse({"details":"Already authenticated"}, status = 403)
     if request.method == "POST":
         try:
             data = json.loads(request.body)
+            print(data)
         except json.JSONDecodeError:
             print("Bad json could not decode")
-            return JsonResponse({"error":"bad request"}, status = 400)
+            return JsonResponse({"details":"Server error"}, status = 500)
         serizalizer = UserSerizalizer(data=data)
-        if serizalizer.is_valid():
-            user = serizalizer.save()
-            user.is_active = False
-            print(user)
-            activate_email(request, user, user.email)
-            return JsonResponse({"success":"User signed up"}, status = 200)
-        else:
-            [print(f'Field {k} : {v}') for k , v in serizalizer.errors.items()]
-            return JsonResponse({"error":"Invalid data received"}, status = 400)
-    return JsonResponse({"error":"Invalid method"})
+        try:
+            if serizalizer.is_valid():
+                user = serizalizer.save()
+                user.is_active = False
+                print(user)
+                email_thread = threading.Thread(target = activate_email, args = [request, user, user.email])
+                email_thread.start()
+                #email_thread.join()
+                return JsonResponse({"success":"User signed up"}, status = 200)
+            else:
+                details = {k : str(v[0]) for k, v in serizalizer.errors.items() }
+                print(details)
+                return JsonResponse({"details":details}, status = 400)
+        except Exception:
+            return JsonResponse({"details":"User already exists"}, status = 403)
+    return JsonResponse({"details":"Invalid method"}, status = 400)
 
 
 def get_csrf_token(request):
@@ -85,21 +127,30 @@ def get_csrf_token(request):
     return response
 
 
-
-def activate_account(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = get_user_model().objects.get(pk=uid)
-        
-        if default_token_generator.check_token(user, token):
-            user.is_active = True
-            user.save()
-            messages.success(request, "Your account has been activated")
-            return redirect('/api/v1/events')
-        else:
-            messages.error(request, "Invalid or expired token")
-            return redirect("register")
-        
-    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
-        messages.error(request, "Invalid link")
-        return redirect('register')
+@require_GET
+def get_me(request):
+    print(request.user)
+    if request.user.is_authenticated:
+        user = request.user
+        username = user.username
+        email = user.email
+        first_name = user.first_name
+        last_name = user.last_name
+        response = {
+            "userData": {
+                "username":username,
+                "email":email,
+                "first_name":first_name,
+                "last_name":last_name
+            },
+            "isAuthenticated": True
+        }
+        return JsonResponse(response, status = 200)
+    else:
+        print("User not authenticated")
+        return JsonResponse({"details":"User is not authenticated"}, status = 403)
+    
+@csrf_exempt
+def fake_func(request):
+    print(UserEvent.objects.all())
+    return JsonResponse({"succes":"suc"}, status = 200)

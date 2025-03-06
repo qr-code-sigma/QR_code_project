@@ -94,7 +94,7 @@ def event_detail(request, id):
 
 @api_view(['GET'])
 def events_by_pattern(request, pattern):
-    events = Event.objects.filter(name__contains=console.log(response.data)pattern)
+    events = Event.objects.filter(name__contains=pattern)
     serializer = EventSerializer(events, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

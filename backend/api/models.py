@@ -8,6 +8,7 @@ class Event(models.Model):
     places = models.IntegerField()
     location = models.CharField(max_length=100)
     date = models.DateField()
+    status = models.CharField(max_length=20)
 
     class Meta:
         db_table = "events"
@@ -34,4 +35,4 @@ class UserEvent(models.Model):
 
     class Meta:
         unique_together = ('user', 'event')
-        db_table = "user_events"
+        db_table = "user_event"

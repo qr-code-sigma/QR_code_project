@@ -30,7 +30,17 @@ def event_list(request):
         paginator.page_size = 50
         paginated_events = paginator.paginate_queryset(events, request)
         serializer = EventSerializer(paginated_events, many=True)
-        return paginator.get_paginated_response(serializer.data)
+
+        response = paginator.get_paginated_response(serializer.data)
+
+        if response.data.get("next"):
+            response.data["next"] = response.data["next"].replace("http://", "https://")
+
+        if response.data.get("previous"):
+            response.data["previous"] = response.data["previous"].replace("http://", "https://")
+
+        print(response.data)
+        return response
 
     elif request.method == "POST":
         serializer = EventSerializer(data=request.data)

@@ -30,16 +30,16 @@ function Home() {
       setNextPageURL(next);
       setPreviousPageURL(previous);
     } catch (error) {
-        console.log(response.data)
-        setError(error)
-        console.error(error);
+      console.log(response.data);
+      setError(error);
+      console.error(error);
     } finally {
-        console.log(response.data)
-        setLoading(false);
-        const resumeScroll = getAndRemoveStorageItem("SCROLL_POSITION");
-        if (resumeScroll) {
-          setTimeout(() => {
-            window.scrollTo({ top: parseInt(resumeScroll), behavior: "smooth" });
+      console.log(response.data);
+      setLoading(false);
+      const resumeScroll = getAndRemoveStorageItem("SCROLL_POSITION");
+      if (resumeScroll) {
+        setTimeout(() => {
+          window.scrollTo({ top: parseInt(resumeScroll), behavior: "smooth" });
         }, 200);
       }
     }
@@ -49,9 +49,7 @@ function Home() {
     if (isAuthenticated) {
       const savedPage = localStorage.getItem("CURRENT_PAGE") || 1;
       setPage(parseInt(savedPage));
-      fetchEvents(
-        `/events?page=${savedPage}`,
-      );
+      fetchEvents(`/events?page=${savedPage}`);
     }
   }, [isAuthenticated]);
 
@@ -74,27 +72,31 @@ function Home() {
             <Events events={events} />
           </div>
 
-          {loading ? <div>Loading...</div> :
-              !error ? (
-            <>
+          {loading ? (
+            <div>Loading...</div>
+          ) : !error ? (
+            <div className="pagination-container">
               <button
+                className="pagination-button"
                 hidden={!previousPageURL}
                 onClick={() => handlePageChange(previousPageURL, page - 1)}
               >
-                Previous
-              </button>
-              <button
-                hidden={!nextPageURL}
-                onClick={() => handlePageChange(nextPageURL, page + 1)}
-              >
-                Next
+                <i className="fas fa-arrow-left"></i>
               </button>
               <h3>
                 Page {page} of {amountOfPages}
               </h3>
-            </>
-          ) : <div>{error}</div>
-          }
+              <button
+                className="pagination-button"
+                hidden={!nextPageURL}
+                onClick={() => handlePageChange(nextPageURL, page + 1)}
+              >
+                <i className="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          ) : (
+            <div>{error}</div>
+          )}
         </>
       ) : (
         <div className="content">

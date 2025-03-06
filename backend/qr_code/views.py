@@ -3,7 +3,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.http import JsonResponse
 import qrcode
 import qrcode.constants
-from api.models import UserEvent 
+from api.models import UserEvent, User, Event
 
 
 
@@ -17,11 +17,26 @@ def get_qr(request, event_id):
             error_correction=qrcode.constants.ERROR_CORRECT_L, 
             box_size=10, 
             border = 4) 
-        qr.add_data(f'https://qr-code-project.up.railway.app/QR_code_page.html/{event_user.id}') 
+        qr.add_data(f'https://qr-code-project.up.railway.app/qr_page/{event_user.id}') 
         code = qr.get_matrix() 
         print(f"Code: {code}") #temporary
         return JsonResponse({"code":code}, status = 200) 
     except Exception: 
         return JsonResponse({"details":"Cound not create QR code"}, status = 404) 
     
-    
+
+@require_GET
+def render_qr_page(request, event_user_id):
+    event_user = UserEvent.object.get(id=event_user_id)
+
+    event_id = event_user.event_id
+    user_id = event_user.user_id
+
+    user = User.objects.get(id = user_id)
+    event = Event.objects.get(id = event_id)
+    first_name = user.first_name
+    last_name = user.last_name
+    event_name = event.name
+
+    context = {"first_name":first_name, "last_name":last_name, "event":event_name}
+    return render(request, "QR_code_page.html", context=context)

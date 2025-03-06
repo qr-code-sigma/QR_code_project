@@ -35,4 +35,4 @@ class UserEvent(models.Model):
 
     class Meta:
         unique_together = ('user', 'event')
-        db_table = "user_events"
+        db_table = "user_event"

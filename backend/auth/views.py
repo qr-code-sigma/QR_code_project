@@ -8,7 +8,7 @@ from django.middleware.csrf import get_token
 from api.models import User
 from django.core.mail import EmailMessage
 from .serializers import UserSerizalizer
-import threading 
+import threading
 import random
 from datetime import datetime, timezone
 
@@ -16,46 +16,19 @@ from datetime import datetime, timezone
 @require_POST
 def login_view(request):
     data = json.loads(request.body)
+    print(data)
     username = data.get('username')
     password = data.get('password')
-    
-    print("Login Attempt Received")
-    print(f"Username: {username}")
-    
+
     user = authenticate(username=username, password=password)
-    print(f"Authentication Result: {user}")
-    
+    print(f"User auth: {user}")
     if user is None:
-        print("Authentication Failed")
-        return JsonResponse({'details': 'Invalid credentials!'}, status=400)
+        print("Ivalid credentials")
+        return JsonResponse({'details': 'Invalid credentials!'}, status = 400)
 
-    try:
-        login(request, user)
-        print(f"Login Successful for user: {user.username}")
-        print(f"Session Key: {request.session.session_key}")
-        print(f"Session Exists: {request.session.exists(request.session.session_key)}")
-    except Exception as e:
-        print(f"Login Exception: {e}")
-        return JsonResponse({'details': 'Login failed due to internal error'}, status=500)
-
-    print(f"Session Data: {request.session.items()}")
-    print(f"Session Cookies: {request.COOKIES}")
-
-    response = JsonResponse({
-        'details': 'Login successful!',
-        'session_key': request.session.session_key
-    }, status=200)
-
-    response.set_cookie(
-        'sessionid', 
-        request.session.session_key, 
-        samesite='None', 
-        secure=True  
-    )
-    
-    print(f"Set-Cookie Header: {response.headers.get('Set-Cookie', 'No Set-Cookie header')}")
-    
-    return response
+    login(request, user)
+    print(f"User after login: {request.user}")
+    return JsonResponse({'details': 'Login successful!'}, status = 200)
 
 @csrf_exempt
 @require_POST
@@ -105,9 +78,6 @@ def verify_otp(request):
         login(request, user)
         print(request.user)
         print(request.user.is_authenticated)
-        print(request.COOKIES.get('sessionid'))
-        request.session.set_expiry(3600)  
-        request.session.save()
         return JsonResponse({"verified":True}, status = 200)
 
 @csrf_exempt
@@ -140,15 +110,16 @@ def register(request):
             return JsonResponse({"details":"User already exists"}, status = 403)
     return JsonResponse({"details":"Invalid method"}, status = 400)
 
-@csrf_exempt
+
 def get_csrf_token(request):
     response = JsonResponse({"csrfToken": get_token(request)})
     response.set_cookie("csrftoken", get_token(request))
     return response
 
-@csrf_exempt
+
 @require_GET
 def get_me(request):
+    print(request.user)
     if request.user.is_authenticated:
         user = request.user
         username = user.username
@@ -156,14 +127,15 @@ def get_me(request):
         first_name = user.first_name
         last_name = user.last_name
         response = {
-            "userData" : {
+            "userData": {
                 "username":username,
                 "email":email,
                 "first_name":first_name,
-                "last_name":last_name},
-            "isAuthenticated" : True
+                "last_name":last_name
+            },
+            "isAuthenticated": True
         }
-        return JsonResponse(response, status = 200)        
+        return JsonResponse(response, status = 200)
     else:
         print("User not authenticated")
         return JsonResponse({"details":"User is not authenticated"}, status = 403)

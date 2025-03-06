@@ -12,6 +12,10 @@ function Welcome() {
         navigate("/authorization");
     }
 
+    const navigateToAuthorization = () => {
+        navigate("/authorization");
+    }
+
     return (
         <main className="main-welcome-page">
             <h1>Welcome</h1>

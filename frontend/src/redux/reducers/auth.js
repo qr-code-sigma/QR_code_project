@@ -1,33 +1,30 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../config/axiosConfig.js";
 
-export const getMe = createAsyncThunk(
-    'user/checkIsAuth',
-    async function() {
-        const response = await axiosInstance.get('/auth/get_me');
-        console.log(response.data)
-        return response.data;
+export const getMe = createAsyncThunk("user/checkIsAuth", async function () {
+  const response = await axiosInstance.get("/auth/get_me");
+  console.log(response.data);
+  return response.data;
+});
+
+export const authMe = createAsyncThunk(
+  "user/signIn",
+  async function ({ userData, navigate }, { rejectWithValue }) {
+    console.log(userData);
+    const response = await axiosInstance.post("/auth/login/", {
+      username: userData.userName,
+      password: userData.password,
+    });
+
+    if (response.status === 400) {
+      return rejectWithValue(response.data.details);
     }
-)
 
-export const authMe = createAsyncThunk (
-    'user/signIn',
-    async function({userData, navigate}, {rejectWithValue}) {
-      console.log(userData)
-        const response = await axiosInstance.post('/auth/login/', {
-            username: userData.userName,
-            password: userData.password,
-        });
+    navigate("/");
 
-        if(response.status === 400) {
-            return rejectWithValue(response.data.details)
-        }
-        
-        navigate('/');
-
-        return response.data.details;
-    }
-)
+    return response.data.details;
+  },
+);
 
 const initialState = {
   userData: {},
@@ -48,6 +45,11 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getMe.pending, (state) => {
+        console.log("Here");
+        state.status = "loading";
+        state.error = null;
+      })
       .addCase(getMe.fulfilled, (state, action) => {
         state.status = "resolved";
         state.isAuthenticated = action.payload.isAuthenticated;
@@ -59,14 +61,14 @@ export const authSlice = createSlice({
       })
       .addCase(getMe.rejected, setError)
       .addCase(authMe.pending, (state, action) => {
-          state.status = 'loading';
-          state.error = null;
+        state.status = "loading";
+        state.error = null;
       })
       .addCase(authMe.fulfilled, (state, action) => {
-              state.status = 'resolved';
-              state.error = null;
-              state.isAuthenticated = true;
-      })
+        state.status = "resolved";
+        state.error = null;
+        state.isAuthenticated = true;
+      });
   },
 });
 

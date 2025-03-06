@@ -60,8 +60,7 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-CORS_ALLOW_ALL_HEADERS = False
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_HEADERS = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -181,7 +180,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+CORS_ALLOW_ALL_ORIGINS = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -196,7 +195,9 @@ PASSWORD_RESET_TIMEOUT = 14400
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": os.getenv("REDIS_URL"), 
+        "LOCATION": os.getenv("REDIS_URL"),
+        #         "LOCATION": "redis://127.0.0.1:6379/1",
+        #         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
 
@@ -206,21 +207,9 @@ CSP_DEFAULT_SRC = None
 # CSP_FONT_SRC = ("'self'", "data:", "https://qr-code-project-sigma.netlify.app")
 # CSP_IMG_SRC = ("'self'", "data:", "https://qr-code-project-sigma.netlify.app")
 # CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")
-
-SESSION_COOKIE_DOMAIN = ".netlify.app"
-CSRF_COOKIE_DOMAIN = ".netlify.app"
-
-
-
-SESSION_ENGINE = 'django.contrib.sessions.backends.db' 
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SECURE = True 
-CSRF_COOKIE_SECURE = True 
-SESSION_SAVE_EVERY_REQUEST = True
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://qr-code-project.up.railway.app",
-    "https://qr-code-project-sigma.netlify.app",
-    "https://develop--qr-code-project-sigma.netlify.app"
-]
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True

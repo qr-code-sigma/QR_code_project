@@ -4,53 +4,59 @@ import "./home.css";
 import Header from "../../components/Header/header.jsx";
 import Events from "../../components/Events/events.jsx";
 import { useSelector } from "react-redux";
-// import events from "../../test/AllEvents.js";
 import axiosInstance from "../../config/axiosConfig.js";
 import { useEffect, useState } from "react";
+import getAndRemoveStorageItem from "../../utils/getAndRemoveStorageItem.js";
 
 function Home() {
   const { userData, isAuthenticated } = useSelector((state) => state.auth);
   const [events, setEvents] = useState([]);
+  const [amountOfPages, setAmountOfPages] = useState(1);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [nextPageURL, setNextPageURL] = useState(null);
+  const [previousPageURL, setPreviousPageURL] = useState(null);
 
-  const fetchEvents = async (pageNum) => {
+  const fetchEvents = async (url) => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`events?page=${pageNum}`);
-      const { count, results } = response.data;
+      const response = await axiosInstance.get(url);
+      const { count, next, previous, results } = response.data;
 
-      if (pageNum === 1) setEvents(results);
-      else {
-        setEvents((prev) => [...prev, ...results]);
-      }
-
-      setHasMore(results.length === 50);
+      setAmountOfPages(Math.ceil(count / 50));
+      setEvents(results);
+      setNextPageURL(next);
+      setPreviousPageURL(previous);
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
+      const resumeScroll = getAndRemoveStorageItem("SCROLL_POSITION");
+      if (resumeScroll) {
+        setTimeout(() => {
+          window.scrollTo({ top: parseInt(resumeScroll), behavior: "smooth" });
+        }, 200);
+      }
     }
   };
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchEvents(1);
-      // (async () => {
-      //   try {
-      //     await fetchEvents(1);
-      //   } catch (error) {
-      //     console.error(error);
-      //   }
-      // })();
+      const savedPage = localStorage.getItem("CURRENT_PAGE") || 1;
+      setPage(parseInt(savedPage));
+      fetchEvents(
+        `${import.meta.env.VITE_API_URL}/api/v1/events?page=${savedPage}`,
+      );
     }
   }, [isAuthenticated]);
 
-  const handleMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchEvents(nextPage);
+  const handlePageChange = (url, futurePage) => {
+    if (isAuthenticated) {
+      localStorage.setItem("CURRENT_PAGE", futurePage);
+      fetchEvents(url);
+      setPage(futurePage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
@@ -61,12 +67,29 @@ function Home() {
           <div className="events-container">
             {userData.status === "admin" && <button>Add new</button>}
             <Events events={events} />
-            {hasMore && (
-              <button onClick={handleMore} disabled={loading}>
-                {loading ? "Loading..." : "Load More"}
-              </button>
-            )}
           </div>
+
+          {!loading ? (
+            <>
+              <button
+                hidden={!previousPageURL}
+                onClick={() => handlePageChange(previousPageURL, page - 1)}
+              >
+                Previous
+              </button>
+              <button
+                hidden={!nextPageURL}
+                onClick={() => handlePageChange(nextPageURL, page + 1)}
+              >
+                Next
+              </button>
+              <h3>
+                Page {page} of {amountOfPages}
+              </h3>
+            </>
+          ) : (
+            "Loading...."
+          )}
         </>
       ) : (
         <div className="content">

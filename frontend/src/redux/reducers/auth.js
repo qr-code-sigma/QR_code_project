@@ -26,7 +26,7 @@ export const authMe = createAsyncThunk(
 
 const initialState = {
   userData: {},
-  isAuthenticated: false,
+  isAuthenticated: true,
   status: null,
 };
 

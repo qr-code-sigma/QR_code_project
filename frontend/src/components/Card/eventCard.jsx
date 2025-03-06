@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import truncate from "../../utils/truncateText.js";
 
 function EventCard({
-  title,
+  name,
   description,
   location,
   date,
@@ -23,7 +23,7 @@ function EventCard({
     localStorage.setItem("SCROLL_POSITION", window.scrollY.toString());
     navigate("/event", {
       state: {
-        title,
+        name,
         description,
         location,
         date,
@@ -36,7 +36,7 @@ function EventCard({
 
   return (
     <button className={cardClass} onClick={toEventDetail}>
-      <h3 className="event-title">{title}</h3>
+      <h3 className="event-title">{name}</h3>
       <p className="event-description">{truncate(description, 50)}</p>
       <div className="event-info">
         <div className="event-details">

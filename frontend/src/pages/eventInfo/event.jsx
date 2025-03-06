@@ -20,9 +20,11 @@ function Event() {
             try {
                 response = await axiosInstance.get(`/qr/get_qr_code/${location.state.id}`)
             } catch (e) {
+                console.log(response.data)
                 setLoading(false);
                 setError(response.data.details);
             } finally {
+                console.log(response.data)
                 setLoading(false);
                 setRegistered(response.data.isRegistered)
                 if(response.data.isRegistered) {

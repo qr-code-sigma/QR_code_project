@@ -24,20 +24,21 @@ function Home() {
     try {
       const response = await axiosInstance.get(url);
       const { count, next, previous, results } = response.data;
-
       setAmountOfPages(Math.ceil(count / 50));
       setEvents(results);
       setNextPageURL(next);
       setPreviousPageURL(previous);
     } catch (error) {
-      setError(error)
-      console.error(error);
+        console.log(response.data)
+        setError(error)
+        console.error(error);
     } finally {
-      setLoading(false);
-      const resumeScroll = getAndRemoveStorageItem("SCROLL_POSITION");
-      if (resumeScroll) {
-        setTimeout(() => {
-          window.scrollTo({ top: parseInt(resumeScroll), behavior: "smooth" });
+        console.log(response.data)
+        setLoading(false);
+        const resumeScroll = getAndRemoveStorageItem("SCROLL_POSITION");
+        if (resumeScroll) {
+          setTimeout(() => {
+            window.scrollTo({ top: parseInt(resumeScroll), behavior: "smooth" });
         }, 200);
       }
     }

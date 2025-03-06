@@ -15,27 +15,31 @@ function Home() {
   const [amountOfPages, setAmountOfPages] = useState(1);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [nextPageURL, setNextPageURL] = useState(null);
   const [previousPageURL, setPreviousPageURL] = useState(null);
 
   const fetchEvents = async (url) => {
     setLoading(true);
+    let response;
     try {
-      const response = await axiosInstance.get(url);
+      response = await axiosInstance.get(url);
       const { count, next, previous, results } = response.data;
-
       setAmountOfPages(Math.ceil(count / 50));
       setEvents(results);
       setNextPageURL(next);
       setPreviousPageURL(previous);
     } catch (error) {
-      console.error(error);
+        console.log(response.data)
+        setError(error)
+        console.error(error);
     } finally {
-      setLoading(false);
-      const resumeScroll = getAndRemoveStorageItem("SCROLL_POSITION");
-      if (resumeScroll) {
-        setTimeout(() => {
-          window.scrollTo({ top: parseInt(resumeScroll), behavior: "smooth" });
+        console.log(response.data)
+        setLoading(false);
+        const resumeScroll = getAndRemoveStorageItem("SCROLL_POSITION");
+        if (resumeScroll) {
+          setTimeout(() => {
+            window.scrollTo({ top: parseInt(resumeScroll), behavior: "smooth" });
         }, 200);
       }
     }
@@ -70,7 +74,8 @@ function Home() {
             <Events events={events} />
           </div>
 
-          {!loading ? (
+          {loading ? <div>Loading...</div> :
+              !error ? (
             <>
               <button
                 hidden={!previousPageURL}
@@ -88,9 +93,8 @@ function Home() {
                 Page {page} of {amountOfPages}
               </h3>
             </>
-          ) : (
-            "Loading...."
-          )}
+          ) : <div>{error}</div>
+          }
         </>
       ) : (
         <div className="content">

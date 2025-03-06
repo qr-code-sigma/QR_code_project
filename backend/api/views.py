@@ -28,7 +28,7 @@ def event_list(request):
         events = events.order_by('id')
         events = events.annotate(count=Count('userevent__user'))
         paginator = PageNumberPagination()
-        paginator.page_size = 50
+        paginator.page_size = 48
         paginated_events = paginator.paginate_queryset(events, request)
         serializer = EventSerializer(paginated_events, many=True)
         response = paginator.get_paginated_response(serializer.data)

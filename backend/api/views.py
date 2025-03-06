@@ -33,13 +33,13 @@ def event_list(request):
 
         response = paginator.get_paginated_response(serializer.data)
 
-        # Оновлення URL у paginator response
         if response.data.get("next"):
             response.data["next"] = response.data["next"].replace("http://", "https://")
 
         if response.data.get("previous"):
             response.data["previous"] = response.data["previous"].replace("http://", "https://")
 
+        print(response.data)
         return response
 
     elif request.method == "POST":

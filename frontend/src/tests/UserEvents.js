@@ -7,8 +7,8 @@ const events = [
     location: "Kyiv, Street 15",
     date: "22.05.2025",
     status: "Public",
-    current_people: 0,
-    max_people: 100,
+    current_people: 32,
+    places: 100,
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ const events = [
     date: "23.05.2025",
     status: "Private",
     current_people: 0,
-    max_people: 100,
+    places: 100,
   },
   {
     id: 3,
@@ -28,7 +28,7 @@ const events = [
     date: "25.05.2025",
     status: "Public",
     current_people: 0,
-    max_people: 100,
+    places: 100,
   },
   {
     id: 4,
@@ -39,7 +39,7 @@ const events = [
     date: "22.05.2025",
     status: "Public",
     current_people: 210,
-    max_people: 300,
+    places: 300,
   },
   {
     id: 5,
@@ -49,7 +49,7 @@ const events = [
     date: "23.05.2025",
     status: "Private",
     current_people: 3,
-    max_people: 100,
+    places: 100,
   },
   {
     id: 6,
@@ -59,7 +59,7 @@ const events = [
     date: "25.05.2025",
     status: "Public",
     current_people: 34,
-    max_people: 150,
+    places: 150,
   },
 ];
 

@@ -31,18 +31,16 @@ def event_list(request):
         paginated_events = paginator.paginate_queryset(events, request)
         serializer = EventSerializer(paginated_events, many=True)
 
-        if serializer.data["next"]:
-            serializer.data["next"] = serializer.data["next"].replace(
-                "http://", "https://"
-            )
+        response = paginator.get_paginated_response(serializer.data)
 
-        if serializer.data["previous"]:
-            serializer.data["previous"] = serializer.data["previous"].replace(
-                "http://", "https://"
-            )
+        # Оновлення URL у paginator response
+        if response.data.get("next"):
+            response.data["next"] = response.data["next"].replace("http://", "https://")
 
-        print(serializer.data)
-        return paginator.get_paginated_response(serializer.data)
+        if response.data.get("previous"):
+            response.data["previous"] = response.data["previous"].replace("http://", "https://")
+
+        return response
 
     elif request.method == "POST":
         serializer = EventSerializer(data=request.data)

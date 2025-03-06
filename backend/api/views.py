@@ -33,7 +33,7 @@ def event_list(request):
         events = events.filter(filters)
         print(f"Number of events after filtering: {events.count()}")
         events = events.order_by('id')
-        events = events.annotate(count=Count('userevents__user'))
+        events = events.annotate(count=Count('userevent__user'))
         print(f"Events: {events}")
         paginator = PageNumberPagination()
         paginator.page_size = 50

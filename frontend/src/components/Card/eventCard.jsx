@@ -8,7 +8,7 @@ function EventCard({
   location,
   date,
   status,
-  max_people,
+  places,
   current_people,
 }) {
   const navigate = useNavigate();
@@ -19,6 +19,7 @@ function EventCard({
     status === "Public" ? "event-status public" : "event-status private";
 
   const toEventDetail = () => {
+    localStorage.setItem("SCROLL_POSITION", window.scrollY.toString());
     navigate("/event", {
       state: {
         title,
@@ -26,7 +27,7 @@ function EventCard({
         location,
         date,
         status,
-        max_people,
+        places,
         current_people,
       },
     });

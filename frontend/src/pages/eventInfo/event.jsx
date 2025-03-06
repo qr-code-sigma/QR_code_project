@@ -26,7 +26,7 @@ function Event() {
       <main className="event-main-container">
         <p className="event-page-title">{location.state.title}</p>
         <div className="places-badge">
-          {location.state.current_people}/{location.state.max_people}
+          {location.state.current_people}/{location.state.places}
         </div>
         <section className="event-main-content">
           <div className="event-page-description">

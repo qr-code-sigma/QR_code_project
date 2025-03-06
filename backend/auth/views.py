@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.middleware.csrf import get_token
-from api.models import User
+from api.models import User, UserEvent
 from django.core.mail import EmailMessage
 from .serializers import UserSerizalizer
 import threading
@@ -139,3 +139,8 @@ def get_me(request):
     else:
         print("User not authenticated")
         return JsonResponse({"details":"User is not authenticated"}, status = 403)
+    
+@csrf_exempt
+def fake_func(request):
+    print(UserEvent.objects.all())
+    return JsonResponse({"succes":"suc"}, status = 200)

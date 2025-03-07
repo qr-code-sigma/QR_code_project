@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import axiosInstance from '../../config/axiosConfig.js'
 import "./event.css";
 import {useLocation, useNavigate} from "react-router-dom";
+import Canvas from "../../components/Canvas/canvas.jsx";
 
 function Event() {
     const location = useLocation();
@@ -116,7 +117,9 @@ function Event() {
                                     <div className="registration-success">
                                         <h2>You’ve been registered!</h2>
                                         <p>Here is your QR code</p>
-                                        <div className="qr-code-placeholder"></div>
+                                        <div className="qr-code-placeholder">
+                                            <Canvas matrix={code}/>
+                                        </div>
                                         <button className="btn-download">Download PDF</button>
                                     </div>
                                 ) : (

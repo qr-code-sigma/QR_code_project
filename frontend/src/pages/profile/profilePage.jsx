@@ -2,7 +2,6 @@ import React from "react";
 import "./profilePage.css";
 import ProfileHeader from "../../components/ProfileHeader/ProfileHeader";
 import Footer from "../../components/Footer/Footer.jsx";
-import Events from "../../components/Events/events.jsx";
 
 function ProfilePage({ status }) {
   const statusClass =

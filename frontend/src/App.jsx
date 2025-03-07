@@ -24,7 +24,6 @@ function App() {
                 <Route path="/authorization" element={<Authorization/>}/>
                 <Route path="/registration" element={<Registration/>}/>
                 <Route path="/confirmEmail" element={<ConfirmEmail/>}/>
-                <Route path="/canvas" element={<Canvas/>}/>
 
                 <Route element={<ProtectedRoutes/>}>
                     <Route

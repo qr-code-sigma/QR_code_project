@@ -7,6 +7,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from qr_code.views import get_qr
+from django.urls import reverse
 @csrf_exempt
 @require_GET
 def get_user(request, id):
@@ -44,7 +45,7 @@ def event_registration_view(request, event_id):
     user_event = UserEvent.objects.create(event=event, user=user)
     user_event.save()
 
-    return redirect("qr_code:get_qr_code", event_id = event_id)
+    return redirect(reverse("qr_code:get_qr_code", args=[event_id]))
 
 @csrf_exempt
 @require_POST

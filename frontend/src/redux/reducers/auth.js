@@ -1,5 +1,6 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import axiosInstance from "../../config/axiosConfig.js";
+import log from "eslint-plugin-react/lib/util/log.js";
 
 export const getMe = createAsyncThunk(
     "user/checkIsAuth",
@@ -28,6 +29,23 @@ export const authMe = createAsyncThunk(
         }
     },
 );
+
+export const logOut = createAsyncThunk(
+    'user/logout',
+    async function ({navigate}, {rejectWithValue}) {
+        let response;
+        try {
+            response = await axiosInstance.post("/auth/logout/");
+
+            navigate("/");
+
+            return response.data;
+        } catch (e) {
+            console.log(`Response in error: ${e.response.data.details}`)
+            return rejectWithValue(e.response.data.details);
+        }
+    },
+)
 
 function setUserData(state, action, status) {
     state[status] = "resolved";
@@ -78,6 +96,10 @@ export const authSlice = createSlice({
             .addCase(authMe.rejected, (state, action) => {
                 state.authStatus = "rejected";
                 state.error = action.payload;
+            })
+            .addCase(logOut.fulfilled, (state, action) => {
+                state.isAuthenticated = false;
+                state.userData = {};
             })
     },
 });

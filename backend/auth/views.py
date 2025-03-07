@@ -77,8 +77,8 @@ def verify_otp(request):
     else:
         print("Valid code, authorizing...")
         user.is_active = True
+        user.save()
         login(request, user)
-        print(request.user)
         print(request.user.is_authenticated)
         return JsonResponse({"verified":True}, status = 200)
 
@@ -99,10 +99,10 @@ def register(request):
             if serizalizer.is_valid():
                 user = serizalizer.save()
                 user.is_active = False
+                user.save()
                 print(user)
                 email_thread = threading.Thread(target = activate_email, args = [request, user, user.email])
                 email_thread.start()
-                #email_thread.join()
                 return JsonResponse({"success":"User signed up"}, status = 200)
             else:
                 details = {k : str(v[0]) for k, v in serizalizer.errors.items() }

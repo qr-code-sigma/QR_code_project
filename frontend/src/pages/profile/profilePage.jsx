@@ -8,8 +8,8 @@ function ProfilePage({ status }) {
     status === "Public"
       ? "user-status public"
       : status === "Employee"
-        ? "user-status employee"
-        : "user-status admin";
+      ? "user-status employee"
+      : "user-status admin";
 
   return (
     <div className="profile-page-container">

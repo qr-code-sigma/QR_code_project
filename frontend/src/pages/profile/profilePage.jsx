@@ -8,6 +8,7 @@ function ProfilePage() {
 
   const { userData } = useSelector(state => state.auth)
   console.log(userData);
+
   return (
     <div className="profile-page-container">
       <ProfileHeader name={userData.first_name} surname={userData.last_name} />

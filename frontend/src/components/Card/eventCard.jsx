@@ -42,7 +42,7 @@ function EventCard({
       <p className="event-description">{truncate(description, 50)}</p>
       <div className="event-info">
         <div className="event-details">
-          <p className="event-location">{location}</p>
+          <p className="event-location">{truncate(location, 20)}</p>
           <p className="event-date">{date}</p>
         </div>
         <div className={statusClass}>{status}</div>

@@ -1,5 +1,6 @@
 from .models import Event
 from .serializers import EventSerializer
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from django.db.models import Q, Count
 from django.shortcuts import render
@@ -16,7 +17,7 @@ from rest_framework.pagination import PageNumberPagination
 def base(request):
     return HttpResponse("<h1>Hello</h1>")
 
-
+@csrf_exempt
 @api_view(['GET', 'POST'])
 def event_list(request):
     if request.method == "GET":
@@ -61,7 +62,9 @@ def event_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
+@csrf_exempt
 @api_view(['GET','PUT', 'DELETE', 'PATCH'])
 def event_detail(request, id):
     try:
@@ -97,6 +100,3 @@ def events_by_pattern(request, pattern):
     events = Event.objects.filter(name__contains=pattern)
     serializer = EventSerializer(events, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-

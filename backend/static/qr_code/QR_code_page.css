@@ -1,0 +1,29 @@
+.qr-page {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--background-secondary);
+}
+
+.main-qr {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: var(--background-secondary);
+    text-align: center;
+    flex: 1;
+    max-width: 745px;
+    gap: 46px;
+
+}
+
+.main-qr h1 {
+    font-size: 48px;
+}
+
+.main-qr p {
+    font-size: 24px;
+}

@@ -34,7 +34,6 @@ function Home() {
       setError(error);
       console.error(error);
     } finally {
-      console.log(response.data);
       setLoading(false);
       const resumeScroll = getAndRemoveStorageItem("SCROLL_POSITION");
       if (resumeScroll) {
@@ -48,8 +47,12 @@ function Home() {
   useEffect(() => {
     if (isAuthenticated) {
       const savedPage = localStorage.getItem("CURRENT_PAGE") || 1;
-      savedPage = savedPage < 1 ? 1 : savedPage
+      if (savedPage < 1) {
+        localStorage.setItem("CURRENT_PAGE", 1)
+        savedPage = 1
+      }
       setPage(parseInt(savedPage));
+      console.log(savedPage)
       fetchEvents(`/events?page=${savedPage}`);
     }
   }, [isAuthenticated]);

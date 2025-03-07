@@ -1,11 +1,13 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import axiosInstance from "../../config/axiosConfig.js";
 
-export const getMe = createAsyncThunk("user/checkIsAuth", async function () {
-    const response = await axiosInstance.get("/auth/get_me");
-    console.log(response.data);
-    return response.data;
-});
+export const getMe = createAsyncThunk(
+    "user/checkIsAuth",
+    async function () {
+        const response = await axiosInstance.get("/auth/get_me");
+        console.log(response.data);
+        return response.data;
+    });
 
 export const authMe = createAsyncThunk(
     "user/signIn",
@@ -16,42 +18,41 @@ export const authMe = createAsyncThunk(
                 username: userData.userName,
                 password: userData.password,
             });
+
+            navigate("/");
+
+            return response.data.details;
         } catch (e) {
-            return rejectWithValue(response.data.details);
+            console.log(`Response in error: ${e.response.data.details}`)
+            return rejectWithValue(e.response.data.details);
         }
-
-        navigate("/");
-
-        return response.data.details;
     },
 );
 
 const initialState = {
     userData: {},
     isAuthenticated: false,
-    status: null,
-};
-
-const setError = (state, action) => {
-    state.status = "rejected";
-    state.error = action.payload;
+    getMeStatus: null,
+    authStatus: null
 };
 
 export const authSlice = createSlice({
     name: "userSlice",
     initialState,
     reducers: {
-        test: (state, action) => {
+        clearState: (state) => {
+            state.authStatus = null;
+            state.error = null;
         },
     },
     extraReducers: (builder) => {
         builder
             .addCase(getMe.pending, (state) => {
-                state.status = "loading";
+                state.getMeStatus = "loading";
                 state.error = null;
             })
             .addCase(getMe.fulfilled, (state, action) => {
-                state.status = "resolved";
+                state.getMeStatus = "resolved";
                 state.isAuthenticated = action.payload.isAuthenticated;
                 if (action.payload.isAuthenticated) {
                     state.userData = action.payload.userData;
@@ -59,18 +60,24 @@ export const authSlice = createSlice({
                     state.userData = {};
                 }
             })
-            .addCase(getMe.rejected, setError)
+            .addCase(getMe.rejected, (state, action) => {
+                state.getMeStatus = 'rejected';
+            })
             .addCase(authMe.pending, (state, action) => {
-                state.status = "loading";
+                state.authStatus = "loading";
                 state.error = null;
             })
             .addCase(authMe.fulfilled, (state, action) => {
-                state.status = "resolved";
+                state.authStatus = "resolved";
                 state.error = null;
-            });
+            })
+            .addCase(authMe.rejected, (state, action) => {
+                state.authStatus = "rejected";
+                state.error = action.payload;
+            })
     },
 });
 
-export const {test} = authSlice.actions;
+export const {clearState} = authSlice.actions;
 
 export default authSlice.reducer;

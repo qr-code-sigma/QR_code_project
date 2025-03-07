@@ -29,6 +29,17 @@ export const authMe = createAsyncThunk(
     },
 );
 
+function setUserData(state, action, status) {
+    state[status] = "resolved";
+    state.isAuthenticated = action.payload.isAuthenticated;
+    if (action.payload.isAuthenticated) {
+        state.userData = action.payload.userData;
+    } else {
+        state.userData = {};
+    }
+    state.error = null;
+}
+
 const initialState = {
     userData: {},
     isAuthenticated: false,
@@ -52,13 +63,7 @@ export const authSlice = createSlice({
                 state.error = null;
             })
             .addCase(getMe.fulfilled, (state, action) => {
-                state.getMeStatus = "resolved";
-                state.isAuthenticated = action.payload.isAuthenticated;
-                if (action.payload.isAuthenticated) {
-                    state.userData = action.payload.userData;
-                } else {
-                    state.userData = {};
-                }
+                setUserData(state, action, 'getMeStatus')
             })
             .addCase(getMe.rejected, (state, action) => {
                 state.getMeStatus = 'rejected';
@@ -68,8 +73,7 @@ export const authSlice = createSlice({
                 state.error = null;
             })
             .addCase(authMe.fulfilled, (state, action) => {
-                state.authStatus = "resolved";
-                state.error = null;
+                setUserData(state, action, 'authStatus')
             })
             .addCase(authMe.rejected, (state, action) => {
                 state.authStatus = "rejected";

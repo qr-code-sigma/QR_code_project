@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 @require_GET
 def get_qr(request, event_id):
     if not request.user.is_authenticated:
-        return JsonResponse({"details":"User not authenticated"}, status = 401)
+        return JsonResponse({"error":"User not authenticated"}, status = 401)
     try:
         event_user = UserEvent.objects.get(event_id = event_id, user_id = request.user.id)
     except Exception:

@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import truncate from "../../utils/truncateText.js";
 
 function EventCard({
+  id,
   name,
   description,
   location,
   date,
   status,
   places,
-  current_people,
+  count: current_people,
 }) {
   const navigate = useNavigate();
 
@@ -23,6 +24,7 @@ function EventCard({
     localStorage.setItem("SCROLL_POSITION", window.scrollY.toString());
     navigate("/event", {
       state: {
+        id,
         name,
         description,
         location,
@@ -33,6 +35,8 @@ function EventCard({
       },
     });
   };
+
+  console.log(`Current people in eventCard file: ${current_people}`);
 
   return (
     <button className={cardClass} onClick={toEventDetail}>

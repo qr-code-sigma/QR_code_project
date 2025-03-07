@@ -68,7 +68,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 50,
+    'PAGE_SIZE': 48,
     'USE_HTTPS': True
 }
 
@@ -197,8 +197,8 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": os.getenv("REDIS_URL"),
-        #         "LOCATION": "redis://127.0.0.1:6379/1",
-        #         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        #"LOCATION": "redis://127.0.0.1:6379/1",
+        #'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
 

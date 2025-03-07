@@ -2,25 +2,22 @@ import React from "react";
 import "./profilePage.css";
 import ProfileHeader from "../../components/ProfileHeader/ProfileHeader";
 import Footer from "../../components/Footer/Footer.jsx";
+import {useSelector} from "react-redux";
 
-function ProfilePage({ status }) {
-  const statusClass =
-    status === "Public"
-      ? "user-status public"
-      : status === "Employee"
-        ? "user-status employee"
-        : "user-status admin";
+function ProfilePage() {
 
+  const { userData } = useSelector(state => state.auth)
+  console.log(userData);
   return (
     <div className="profile-page-container">
-      <ProfileHeader />
+      <ProfileHeader name={userData.first_name} surname={userData.last_name} />
       <main className="profile-main-content">
         <section className="profile-info">
           <div className="status">
-            Status: <span className={statusClass}>{status}</span>
+            Status: <span className='status'>{userData.status}</span>
           </div>
           <div className="email">
-            Email: <span>mimimimimimimi@gmail.com</span>
+            Email: <span>{userData.email}</span>
           </div>
         </section>
         <section className="to-settings">

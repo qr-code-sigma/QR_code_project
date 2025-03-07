@@ -1,10 +1,10 @@
 import React from "react";
 import "./profileHeader.css";
 import { useNavigate } from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {logOut} from "../../redux/reducers/auth.js";
 
-function ProfileHeader() {
+function ProfileHeader({name, surname}) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -18,7 +18,7 @@ function ProfileHeader() {
         <button onClick={() => navigate("/")} className="btn-default">
           <span>Back</span>
         </button>
-        <p className="profile-header-text">Name Surname</p>
+        <p className="profile-header-text">{name} {surname}</p>
         <button onClick={logOutMe} className="btn-danger">
           <span>Log Out</span>
         </button>

@@ -44,7 +44,7 @@ def event_registration_view(request, event_id):
     user_event = UserEvent.objects.create(event=event, user=user)
     user_event.save()
 
-    return get_qr(request, event_id)
+    return redirect("qr_code:get_qr_code", event_id = event_id)
 
 @csrf_exempt
 @require_POST

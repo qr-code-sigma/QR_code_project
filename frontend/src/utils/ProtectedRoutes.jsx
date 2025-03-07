@@ -2,17 +2,17 @@ import { Outlet, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const ProtectedRoutes = () => {
-  const { status, isAuthenticated } = useSelector((state) => state.auth);
+  const { getMeStatus, isAuthenticated } = useSelector((state) => state.auth);
 
-  if (status === "loading") {
+  if (getMeStatus === "loading") {
     return <h1>'loading'</h1>;
   }
 
-  if (isAuthenticated && status === "resolved") {
+  if (isAuthenticated && getMeStatus === "resolved") {
     return <Outlet />;
   }
 
-  if (status === "rejected") {
+  if (getMeStatus === "rejected") {
     return <Navigate to="/authorization" />;
   }
 };

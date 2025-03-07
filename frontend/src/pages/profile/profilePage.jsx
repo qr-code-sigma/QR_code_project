@@ -43,7 +43,7 @@ function ProfilePage({ status }) {
             </button>
           </form>
         </section>
-        <Events />
+        {/*<Events />*/}
       </main>
       <Footer />
     </div>

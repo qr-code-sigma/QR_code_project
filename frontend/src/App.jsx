@@ -7,6 +7,7 @@ import ConfirmEmail from "./pages/confirmEmail/confirmEmail.jsx";
 import {useDispatch} from "react-redux";
 import { getMe } from "./redux/reducers/auth.js";
 import Authorization from "./pages/authorization/authorization.jsx";
+import Canvas from "./components/Canvas/canvas.jsx";
 
 function App() {
     const dispatch = useDispatch();
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/authorization" element={<Authorization/>}/>
                 <Route path="/registration" element={<Registration/>}/>
                 <Route path="/confirmEmail" element={<ConfirmEmail/>}/>
+                <Route path="/canvas" element={<Canvas/>}/>
 
                 <Route element={<ProtectedRoutes/>}>
                     <Route

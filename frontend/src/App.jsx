@@ -1,13 +1,12 @@
 import React, {useEffect} from "react";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
-import {AddEvent, EventInfo, Home, Profile, QrCode, Settings} from './pages/index.js'
+import {AddEvent, EventInfo, Home, Profile, Settings} from './pages/index.js'
 import ProtectedRoutes from './utils/ProtectedRoutes.jsx'
 import Registration from "./pages/registration/registration.jsx";
 import ConfirmEmail from "./pages/confirmEmail/confirmEmail.jsx";
 import {useDispatch} from "react-redux";
 import { getMe } from "./redux/reducers/auth.js";
 import Authorization from "./pages/authorization/authorization.jsx";
-import Canvas from "./components/Canvas/canvas.jsx";
 
 function App() {
     const dispatch = useDispatch();

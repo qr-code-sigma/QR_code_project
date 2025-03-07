@@ -5,7 +5,8 @@ from api.models import User, Event, UserEvent
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.shortcuts import redirect
+from qr_code.views import get_qr
 @csrf_exempt
 @require_GET
 def get_user(request, id):
@@ -43,7 +44,7 @@ def event_registration_view(request, event_id):
     user_event = UserEvent.objects.create(event=event, user=user)
     user_event.save()
 
-    return JsonResponse({ "details" : "Successfully registered for the event." }, status = 200)
+    return get_qr(request, event_id)
 
 @csrf_exempt
 @require_POST

@@ -2,12 +2,12 @@ import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import useDisabledButton from "../../hooks/useDisabledButton.js";
-import {authMe} from "../../redux/reducers/auth.js";
+import {authMe, clearState} from "../../redux/reducers/auth.js";
 
 function Authorization() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { status, error } = useSelector(state => state.user)
+    const { authStatus, error } = useSelector(state => state.auth)
 
     const [formData, setFormData] = React.useState({
         userName: '',
@@ -21,6 +21,12 @@ function Authorization() {
 
         dispatch(authMe({userData: formData, navigate}))
     }
+
+    useEffect(() => {
+        return () => {
+            dispatch(clearState())
+        }
+    }, [])
 
     const onChangeInput = (e) => {
         setFormData((prev) => ({
@@ -65,8 +71,8 @@ function Authorization() {
                     <span>Submit</span>
                 </button>
             </section>
-            {status === 'loading' && 'loading'}
-            {status === 'rejected' && error}
+            {authStatus === 'loading' && <div>loading...</div>}
+            {authStatus === 'rejected' && <div>{error}</div>}
         </div>
     );
 }

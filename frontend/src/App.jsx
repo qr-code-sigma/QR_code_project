@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
-import {AddEvent, EventInfo, Home, Profile, QrCode, Settings} from './pages/index.js'
+import {AddEvent, EventInfo, Home, Profile, Settings} from './pages/index.js'
 import ProtectedRoutes from './utils/ProtectedRoutes.jsx'
 import Registration from "./pages/registration/registration.jsx";
 import ConfirmEmail from "./pages/confirmEmail/confirmEmail.jsx";
@@ -19,7 +19,6 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Home/>}/>
-                <Route path="/qr-code" element={<QrCode/>}/>
                 <Route path="/authorization" element={<Authorization/>}/>
                 <Route path="/registration" element={<Registration/>}/>
                 <Route path="/confirmEmail" element={<ConfirmEmail/>}/>

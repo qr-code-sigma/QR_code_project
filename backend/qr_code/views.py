@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 @require_GET
 def get_qr(request, event_id):
     if not request.user.is_authenticated:
-        return JsonResponse({"details":"User not authenticated"}, status = 401)
+        return JsonResponse({"error":"User not authenticated"}, status = 401)
     try:
         event_user = UserEvent.objects.get(event_id = event_id, user_id = request.user.id)
     except Exception:
@@ -22,12 +22,11 @@ def get_qr(request, event_id):
             error_correction=qrcode.constants.ERROR_CORRECT_L, 
             box_size=10, 
             border = 4) 
-        qr.add_data(f'https://qr-code-project.up.railway.app/qr_page/{event_user.id}')
+        qr.add_data(f'https://qr-code-project.up.railway.app/api/v1/qr/invitation/{event_user.id}')
     except Exception:
-        return JsonResponse({"Coul not create a QR code"}, status = 500) 
+        return JsonResponse({"error": "Coul not create a QR code"}, status = 500) 
     code = qr.get_matrix() 
-    print(f"Code: {code}") #temporary
-    return JsonResponse({"code":code}, status = 200) 
+    return JsonResponse({"code":code, "isRegistered":True}, status = 200) 
     
 
 @require_GET

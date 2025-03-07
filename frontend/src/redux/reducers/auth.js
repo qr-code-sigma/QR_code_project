@@ -1,74 +1,109 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import axiosInstance from "../../config/axiosConfig.js";
+import log from "eslint-plugin-react/lib/util/log.js";
 
-export const getMe = createAsyncThunk("user/checkIsAuth", async function () {
-  const response = await axiosInstance.get("/auth/get_me");
-  console.log(response.data);
-  return response.data;
-});
-
-export const authMe = createAsyncThunk(
-  "user/signIn",
-  async function ({ userData, navigate }, { rejectWithValue }) {
-    const response = await axiosInstance.post("/auth/login/", {
-      username: userData.userName,
-      password: userData.password,
+export const getMe = createAsyncThunk(
+    "user/checkIsAuth",
+    async function () {
+        const response = await axiosInstance.get("/auth/get_me");
+        console.log(response.data);
+        return response.data;
     });
 
-    if (response.status === 400) {
-      return rejectWithValue(response.data.details);
-    }
+export const authMe = createAsyncThunk(
+    "user/signIn",
+    async function ({userData, navigate}, {rejectWithValue}) {
+        let response;
+        try {
+            response = await axiosInstance.post("/auth/login/", {
+                username: userData.userName,
+                password: userData.password,
+            });
 
-    navigate("/");
+            navigate("/");
 
-    return response.data.details;
-  },
+            return response.data;
+        } catch (e) {
+            console.log(`Response in error: ${e.response.data.details}`)
+            return rejectWithValue(e.response.data.details);
+        }
+    },
 );
 
-const initialState = {
-  userData: {},
-  isAuthenticated: false,
-  status: null,
-};
+export const logOut = createAsyncThunk(
+    'user/logout',
+    async function ({navigate}, {rejectWithValue}) {
+        let response;
+        try {
+            response = await axiosInstance.post("/auth/logout/");
 
-const setError = (state, action) => {
-  state.status = "rejected";
-  state.error = action.payload;
+            navigate("/");
+
+            return response.data;
+        } catch (e) {
+            console.log(`Response in error: ${e.response.data.details}`)
+            return rejectWithValue(e.response.data.details);
+        }
+    },
+)
+
+function setUserData(state, action, status) {
+    state[status] = "resolved";
+    state.isAuthenticated = action.payload.isAuthenticated;
+    if (action.payload.isAuthenticated) {
+        state.userData = action.payload.userData;
+    } else {
+        state.userData = {};
+    }
+    state.error = null;
+}
+
+const initialState = {
+    userData: {},
+    isAuthenticated: false,
+    getMeStatus: null,
+    authStatus: null
 };
 
 export const authSlice = createSlice({
-  name: "userSlice",
-  initialState,
-  reducers: {
-    test: (state, action) => {},
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(getMe.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(getMe.fulfilled, (state, action) => {
-        state.status = "resolved";
-        state.isAuthenticated = action.payload.isAuthenticated;
-        if (action.payload.isAuthenticated) {
-          state.userData = action.payload.userData;
-        } else {
-          state.userData = {};
-        }
-      })
-      .addCase(getMe.rejected, setError)
-      .addCase(authMe.pending, (state, action) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(authMe.fulfilled, (state, action) => {
-        state.status = "resolved";
-        state.error = null;
-      });
-  },
+    name: "userSlice",
+    initialState,
+    reducers: {
+        clearState: (state) => {
+            state.authStatus = null;
+            state.error = null;
+        },
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(getMe.pending, (state) => {
+                state.getMeStatus = "loading";
+                state.error = null;
+            })
+            .addCase(getMe.fulfilled, (state, action) => {
+                setUserData(state, action, 'getMeStatus')
+            })
+            .addCase(getMe.rejected, (state, action) => {
+                state.getMeStatus = 'rejected';
+            })
+            .addCase(authMe.pending, (state, action) => {
+                state.authStatus = "loading";
+                state.error = null;
+            })
+            .addCase(authMe.fulfilled, (state, action) => {
+                setUserData(state, action, 'authStatus')
+            })
+            .addCase(authMe.rejected, (state, action) => {
+                state.authStatus = "rejected";
+                state.error = action.payload;
+            })
+            .addCase(logOut.fulfilled, (state, action) => {
+                state.isAuthenticated = false;
+                state.userData = {};
+            })
+    },
 });
 
-export const { test } = authSlice.actions;
+export const {clearState} = authSlice.actions;
 
 export default authSlice.reducer;

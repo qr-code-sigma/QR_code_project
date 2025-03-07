@@ -36,8 +36,6 @@ function EventCard({
     });
   };
 
-  console.log(`Current people in eventCard file: ${current_people}`);
-
   return (
     <button className={cardClass} onClick={toEventDetail}>
       <h3 className="event-title">{name}</h3>

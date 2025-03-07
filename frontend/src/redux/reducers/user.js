@@ -3,11 +3,11 @@ import axiosInstance from '../../config/axiosConfig.js'
 
 export const createUser = createAsyncThunk(
     'user/create',
-    async function({user, navigate}, {rejectWithValue}) {
+    async function ({user, navigate}, {rejectWithValue}) {
         let response;
 
         try {
-           response = await axiosInstance.post('/auth/register', {
+            response = await axiosInstance.post('/auth/register', {
                 first_name: user.firstName,
                 last_name: user.lastName,
                 password: user.password,
@@ -15,16 +15,16 @@ export const createUser = createAsyncThunk(
                 email: user.email,
                 username: user.userName
             });
-        } catch(e) {
+        } catch (e) {
             return rejectWithValue(e.response.data.details)
         }
 
-        if(response.status >= 400) {
+        if (response.status >= 400) {
             console.log("Rejected")
             return rejectWithValue(response.data.details)
         }
         console.log("Navigating to email")
-        navigate('/confirmEmail', { state: { email: user.email } })
+        navigate('/confirmEmail', {state: {email: user.email}})
 
         return true;
     }
@@ -32,22 +32,17 @@ export const createUser = createAsyncThunk(
 
 export const confirmEmail = createAsyncThunk(
     'user/confirmEmail',
-    async function({code, email, navigate}, {rejectWithValue}) {
+    async function ({code, email, navigate}, {rejectWithValue}) {
         let response;
         try {
             response = await axiosInstance.post('/auth/confirm_email', {code, email});
-        } catch(e) {
+        } catch (e) {
             return rejectWithValue(response.status)
         }
 
-        if(response.status > 200) {
-            console.log(response.data)
-            return rejectWithValue(response.status)
-        } else {
-            navigate('/')
-            window.location.reload();
-            return 'successful'
-        }
+        navigate('/')
+        window.location.reload();
+        return 'successful'
     }
 )
 
@@ -55,8 +50,6 @@ const initialState = {
     status: null,
     error: null
 }
-
-
 
 
 export const userSlice = createSlice({

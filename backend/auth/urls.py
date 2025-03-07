@@ -8,5 +8,4 @@ urlpatterns = [
     path("csrf-token/", views.get_csrf_token, name="csrf_token"),
     path("confirm_email", views.verify_otp, name = "confirm_email"),
     path("get_me", views.get_me),
-    path("fake", views.fake_func)
 ]

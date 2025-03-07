@@ -1,20 +1,10 @@
 import json
-
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.core.cache import cache
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.middleware.csrf import get_token
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.core.mail import EmailMessage
-from django.contrib import messages
-from django.contrib.auth.tokens import default_token_generator
 from api.models import User, UserEvent
 from django.core.mail import EmailMessage
 from .serializers import UserSerizalizer
@@ -38,7 +28,9 @@ def login_view(request):
 
     login(request, user)
     print(f"User after login: {request.user}")
-    return JsonResponse({'details': 'Login successful!'}, status = 200)
+    userdata = get_userdata(user)
+    
+    return JsonResponse({"userData":userdata, "isAuthenticated":True}, status = 200)
 
 @csrf_exempt
 @require_POST
@@ -132,17 +124,9 @@ def get_me(request):
     print(request.user)
     if request.user.is_authenticated:
         user = request.user
-        username = user.username
-        email = user.email
-        first_name = user.first_name
-        last_name = user.last_name
+        userdata = get_userdata(user)
         response = {
-            "userData": {
-                "username":username,
-                "email":email,
-                "first_name":first_name,
-                "last_name":last_name
-            },
+            "userData": userdata,
             "isAuthenticated": True
         }
         return JsonResponse(response, status = 200)
@@ -150,7 +134,15 @@ def get_me(request):
         print("User not authenticated")
         return JsonResponse({"details":"User is not authenticated"}, status = 403)
     
-@csrf_exempt
-def fake_func(request):
-    print(UserEvent.objects.all())
-    return JsonResponse({"succes":"suc"}, status = 200)
+def get_userdata(user):
+    username = user.username
+    email = user.email
+    first_name = user.first_name
+    last_name = user.last_name
+    response = {
+            "username":username,
+            "email":email,
+            "first_name":first_name,
+            "last_name":last_name
+        }
+    return response

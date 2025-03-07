@@ -24,7 +24,7 @@ def get_qr(request, event_id):
             border = 4) 
         qr.add_data(f'https://qr-code-project.up.railway.app/qr_page/{event_user.id}')
     except Exception:
-        return JsonResponse({"Coul not create a QR code"}, status = 500) 
+        return JsonResponse({"error": "Coul not create a QR code"}, status = 500) 
     code = qr.get_matrix() 
     print(f"Code: {code}") #temporary
     return JsonResponse({"code":code}, status = 200) 

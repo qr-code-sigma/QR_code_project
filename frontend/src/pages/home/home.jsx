@@ -48,7 +48,6 @@ function Home() {
         if (isAuthenticated) {
             const savedPage = localStorage.getItem("CURRENT_PAGE") || 1;
             setPage(parseInt(savedPage));
-            console.log(savedPage)
             fetchEvents(`/events?page=${savedPage}`)
                 .then(() => {
                     console.log("Events were fetched")

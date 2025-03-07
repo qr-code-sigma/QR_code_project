@@ -7,27 +7,32 @@ function Event() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [loading, setLoading] = React.useState(true);
-    const [error, setError] = useState(null);
+    //Using when loading page
+    const [loadingPage, setLoadingPage] = React.useState(true);
+    const [errorLoadingPage, setErrorLoadingPage] = useState(null);
+
+    //Using when registering for the event
+    const [isLoadingRegister, setIsLoadingRegister] = React.useState(false);
+    const [errorRegister, setErrorRegister] = useState(null);
 
     const [registered, setRegistered] = useState(false);
     const [code, setCode] = useState(null);
 
     useEffect(() => {
-        setLoading(true);
+        setLoadingPage(true);
         const fetchQRCode = async () => {
             let response;
             try {
                 response = await axiosInstance.get(`/qr/get_qr_code/${location.state.id}`)
             } catch (e) {
-                console.log(response.data)
-                setLoading(false);
-                setError(response.data.details);
+                console.log(e.response.data.details)
+                setLoadingPage(false);
+                setErrorLoadingPage(e.response.data.details);
             } finally {
                 console.log(response.data)
-                setLoading(false);
+                setLoadingPage(false);
                 setRegistered(response.data.isRegistered)
-                if(response.data.isRegistered) {
+                if (response.data.isRegistered) {
                     setCode(response.data.code);
                 }
             }
@@ -39,8 +44,23 @@ function Event() {
             })
     }, [])
 
-    const handleRegister = () => {
-        setRegistered(true);
+    async function registerForTheEvent() {
+        let response;
+        setIsLoadingRegister(true)
+        try {
+            response = await axiosInstance.post(`/users/${location.state.id}/register_for_event`)
+        } catch (e) {
+            console.log(e.response.data)
+            setIsLoadingRegister(false);
+            setErrorRegister(e.response.data.error);
+        } finally {
+            console.log(response?.data)
+            setIsLoadingRegister(false);
+            setRegistered(response?.data.isRegistered)
+            if (response?.data.isRegistered) {
+                setCode(response.data.code);
+            }
+        }
     }
 
     const statusClass =
@@ -86,25 +106,24 @@ function Event() {
                         </div>
                     </div>
                 </section>
-                {loading ? <div>Loading...</div> :
-                error ? (
-                    <div>Error</div>
-                    ) :
-                    registered ? (
-                    <div className="registration-success">
-                        <h2>You’ve been registered!</h2>
-                        <p>Here is your QR code</p>
-                        <div className="qr-code-placeholder"></div>
-                        <button className="btn-download">Download PDF</button>
-                        <button className="btn-lg">
-                            <span>Main Page</span>
-                        </button>
-                    </div>
-                ) : (
-                    <button className="btn-lg" onClick={handleRegister}>
-                        <span>Register</span>
-                    </button>
-                )}
+                {loadingPage ? <div>Loading...</div> :
+                    errorLoadingPage ? (
+                            <div>Error</div>
+                        ) :
+                        isLoadingRegister ? <h1>Loading...</h1> :
+                            errorRegister ? <h1>{errorRegister}</h1> :
+                                registered ? (
+                                    <div className="registration-success">
+                                        <h2>You’ve been registered!</h2>
+                                        <p>Here is your QR code</p>
+                                        <div className="qr-code-placeholder"></div>
+                                        <button className="btn-download">Download PDF</button>
+                                    </div>
+                                ) : (
+                                    <button className="btn-lg" onClick={registerForTheEvent}>
+                                        <span>Register</span>
+                                    </button>
+                                )}
             </main>
         </div>
     );

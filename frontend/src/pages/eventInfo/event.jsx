@@ -77,7 +77,7 @@ function Event() {
                 </button>
             </header>
             <main className="event-main-container">
-                <p className="event-page-title">{location.state.title}</p>
+                <p className="event-page-title">{location.state.name}</p>
                 <div className="places-badge">
                     {location.state.current_people}/{location.state.places}
                 </div>

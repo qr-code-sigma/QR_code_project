@@ -81,6 +81,7 @@
 }
 
 .event-page-description {
+    width: 100%;
     background-color: var(--btn-settings);
 }
 
@@ -126,8 +127,8 @@
 }
 
 .qr-code-placeholder {
-    width: 180px;
-    height: 180px;
+    width: 205px;
+    height: 205px;
     background-color: white;
 }
 

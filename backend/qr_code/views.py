@@ -22,11 +22,10 @@ def get_qr(request, event_id):
             error_correction=qrcode.constants.ERROR_CORRECT_L, 
             box_size=10, 
             border = 4) 
-        qr.add_data(f'https://qr-code-project.up.railway.app/qr/qr_page/{event_user.id}')
+        qr.add_data(f'https://qr-code-project.up.railway.app/qr/invitation/{event_user.id}')
     except Exception:
         return JsonResponse({"error": "Coul not create a QR code"}, status = 500) 
     code = qr.get_matrix() 
-    print(f"Code: {code}") #temporary
     return JsonResponse({"code":code, "isRegistered":True}, status = 200) 
     
 

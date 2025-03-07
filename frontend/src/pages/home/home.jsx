@@ -10,7 +10,7 @@ import {useEffect, useState} from "react";
 import getAndRemoveStorageItem from "../../utils/getAndRemoveStorageItem.js";
 
 function Home() {
-    const {userData, isAuthenticated} = useSelector((state) => state.auth);
+    const {userData, isAuthenticated, getMeStatus} = useSelector((state) => state.auth);
     const [events, setEvents] = useState([]);
     const [amountOfPages, setAmountOfPages] = useState(1);
     const [page, setPage] = useState(1);
@@ -68,19 +68,22 @@ function Home() {
         }
     };
 
-    return (
-        <div className="home-container">
-            {isAuthenticated ? (
-                <>
-                    <Header/>
-                    <div className="events-container">
-                        {userData.status === "admin" && <button>Add new</button>}
-                        <Events events={events}/>
-                    </div>
+    if(getMeStatus === 'loading' || loading) {
+        return <h1>Loading...</h1>
+    }
 
-                    {loading ? (
-                        <div>Loading...</div>
-                    ) : !error ? (
+    if(getMeStatus === 'resolved' || getMeStatus === 'rejected') {
+        return (
+            <div className="home-container">
+                {isAuthenticated ? (
+                    <>
+                        <Header/>
+                        <div className="events-container">
+                            {userData.status === "admin" && <button>Add new</button>}
+                            <Events events={events}/>
+                        </div>
+
+                        {!error ? (
                         <div className="pagination-container">
                             <button
                                 className="pagination-button"
@@ -100,18 +103,19 @@ function Home() {
                                 <i className="fas fa-arrow-right"></i>
                             </button>
                         </div>
-                    ) : (
+                        ) : (
                         <div>{error}</div>
-                    )}
-                </>
-            ) : (
-                <div className="content">
-                    <Welcome/>
-                </div>
-            )}
-            <Footer/>
-        </div>
-    );
+                        )}
+                    </>
+                ) : (
+                    <div className="content">
+                        <Welcome/>
+                    </div>
+                )}
+                <Footer/>
+            </div>
+        );
+    }
 }
 
 export default Home;

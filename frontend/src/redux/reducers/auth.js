@@ -21,7 +21,7 @@ export const authMe = createAsyncThunk(
 
             navigate("/");
 
-            return response.data.details;
+            return response.data;
         } catch (e) {
             console.log(`Response in error: ${e.response.data.details}`)
             return rejectWithValue(e.response.data.details);

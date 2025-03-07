@@ -48,6 +48,7 @@ function Home() {
   useEffect(() => {
     if (isAuthenticated) {
       const savedPage = localStorage.getItem("CURRENT_PAGE") || 1;
+      savedPage = savedPage < 1 ? 1 : savedPage
       setPage(parseInt(savedPage));
       fetchEvents(`/events?page=${savedPage}`);
     }

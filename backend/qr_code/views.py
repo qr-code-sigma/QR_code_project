@@ -27,7 +27,7 @@ def get_qr(request, event_id):
         return JsonResponse({"error": "Coul not create a QR code"}, status = 500) 
     code = qr.get_matrix() 
     print(f"Code: {code}") #temporary
-    return JsonResponse({"code":code}, status = 200) 
+    return JsonResponse({"code":code, "isRegistered":True}, status = 200) 
     
 
 @require_GET

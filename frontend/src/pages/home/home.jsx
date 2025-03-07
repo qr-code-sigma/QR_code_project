@@ -9,10 +9,11 @@ import axiosInstance from "../../config/axiosConfig.js";
 import { useEffect, useState } from "react";
 import getAndRemoveStorageItem from "../../utils/getAndRemoveStorageItem.js";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../components/Loading/loading.jsx";
 
 function Home() {
   const { userData, isAuthenticated, getMeStatus } = useSelector(
-    (state) => state.auth,
+    (state) => state.auth
   );
   const [events, setEvents] = useState([]);
   const [amountOfPages, setAmountOfPages] = useState(1);
@@ -73,7 +74,19 @@ function Home() {
   };
 
   if (getMeStatus === "loading" || loading) {
-    return <h1>Loading...</h1>;
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100%"
+        }}
+      >
+        <Loading />
+      </div>
+    );
   }
 
   if (getMeStatus === "resolved" || getMeStatus === "rejected") {

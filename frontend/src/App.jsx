@@ -20,7 +20,6 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Home/>}/>
-                <Route path="/qr-code" element={<QrCode/>}/>
                 <Route path="/authorization" element={<Authorization/>}/>
                 <Route path="/registration" element={<Registration/>}/>
                 <Route path="/confirmEmail" element={<ConfirmEmail/>}/>

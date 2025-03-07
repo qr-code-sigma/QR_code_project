@@ -83,8 +83,10 @@ function Home() {
           <>
             <Header />
             <div className="events-container">
-              {/*{userData.status === "admin" && <button>Add new</button>}*/}
-              <button onClick={toAddPage}>Add new</button>
+              {userData.status === "admin" && (
+                <button onClick={toAddPage}>Add new</button>
+              )}
+
               <Events events={events} />
             </div>
 

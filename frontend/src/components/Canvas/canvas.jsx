@@ -4,7 +4,6 @@ function Canvas({ matrix }) {
     const ref = useRef(null);
 
     useEffect(() => {
-        console.log(matrix)
         const ctx = ref.current.getContext('2d');
         const size = 5;
 

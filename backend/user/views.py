@@ -1,11 +1,12 @@
 import json
 
+from django.views.decorators.csrf import csrf_exempt
 from api.models import User, Event, UserEvent
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.core.exceptions import ObjectDoesNotExist
 
-
+@csrf_exempt
 @require_GET
 def get_user(request, id):
     try:
@@ -19,13 +20,14 @@ def get_user(request, id):
     }
     return JsonResponse(response, status = 200)
 
-
+@csrf_exempt
 @require_GET
 def get_users(request):
     users = User.objects.all()
     user_list = [{"username":user.username, "first_name":user.first_name, "last_name":user.last_name} for user in users]
     return JsonResponse({"users":user_list}, status = 200)
 
+@csrf_exempt
 @require_POST
 def event_registration_view(request, event_id):
     try:
@@ -43,6 +45,7 @@ def event_registration_view(request, event_id):
 
     return JsonResponse({ "details" : "Successfully registered for the event." }, status = 200)
 
+@csrf_exempt
 @require_POST
 def edit_user_view(request, id):
     try:

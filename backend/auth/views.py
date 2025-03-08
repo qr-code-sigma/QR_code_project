@@ -2,7 +2,7 @@ import json
 from django.core.cache import cache
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_POST, require_GET
 from django.middleware.csrf import get_token
 from api.models import User, UserEvent
@@ -112,11 +112,9 @@ def register(request):
             return JsonResponse({"details":"User already exists"}, status = 403)
     return JsonResponse({"details":"Invalid method"}, status = 400)
 
-
+@ensure_csrf_cookie
 def get_csrf_token(request):
-    response = JsonResponse({"csrfToken": get_token(request)})
-    response.set_cookie("csrftoken", get_token(request))
-    return response
+    return JsonResponse({'csrfToken': get_token(request)})
 
 
 @require_GET
@@ -133,7 +131,7 @@ def get_me(request):
     else:
         print("User not authenticated")
         return JsonResponse({"details":"User is not authenticated"}, status = 403)
-    
+
 def get_userdata(user):
     username = user.username
     email = user.email

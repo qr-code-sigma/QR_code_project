@@ -17,7 +17,6 @@ from rest_framework.pagination import PageNumberPagination
 def base(request):
     return HttpResponse("<h1>Hello</h1>")
 
-@csrf_exempt
 @api_view(['GET', 'POST'])
 def event_list(request):
     if request.method == "GET":

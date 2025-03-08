@@ -35,9 +35,10 @@ SECRET_KEY = 'django-insecure-x1)zx0+h5#@h_lycg!umor16734h!_e2)&+1d-r+q@08_2rrk$
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-# CORS_ALLOWED_ORIGINS = [
-#     "https://qr-code-project-sigma.netlify.app",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "https://qr-code-project-sigma.netlify.app",
+    "http://localhost:5000"
+]
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
@@ -185,8 +186,6 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_FROM = 'qrcodeproject56@gmail.com'
@@ -206,6 +205,13 @@ CACHES = {
     }
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5000",
+    "https://qr-code-project-sigma.netlify.app",
+]
+
+CSRF_COOKIE_DOMAIN = '.qr-code-project.up.railway.app'
+
 CSP_DEFAULT_SRC = None
 # CSP_SCRIPT_SRC = ("'self'", "'unsafe-eval'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")
 # CSP_CONNECT_SRC = ("'self'", "https://qr-code-project-sigma.netlify.app", "https://qr-code-project.up.railway.app")
@@ -216,5 +222,3 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_HTTPONLY = True

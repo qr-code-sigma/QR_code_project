@@ -211,7 +211,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://qr-code-project-sigma.netlify.app",
 ]
 
-CSRF_COOKIE_DOMAIN = 'qr-code-project.up.railway.app'
+CSRF_COOKIE_DOMAIN = '.qr-code-project.up.railway.app'
 
 CSP_DEFAULT_SRC = None
 # CSP_SCRIPT_SRC = ("'self'", "'unsafe-eval'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")

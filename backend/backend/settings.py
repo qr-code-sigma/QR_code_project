@@ -206,6 +206,11 @@ CACHES = {
     }
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5000",
+    "https://qr-code-project-sigma.netlify.app",
+]
+
 CSP_DEFAULT_SRC = None
 # CSP_SCRIPT_SRC = ("'self'", "'unsafe-eval'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")
 # CSP_CONNECT_SRC = ("'self'", "https://qr-code-project-sigma.netlify.app", "https://qr-code-project.up.railway.app")

@@ -24,9 +24,11 @@ function AddEvent() {
       0,
       newEventInfo.date.indexOf("T"),
     );
-    console.log(newEventInfo);
+
     try {
       await axiosInstance.post("events/", newEventInfo);
+
+      navigate(-1);
     } catch (error) {
       console.log(
         "(catch from add)response after adding new event:",
@@ -35,7 +37,6 @@ function AddEvent() {
       setError(error.response.data);
     } finally {
       setLoading(false);
-      navigate(-1);
     }
   };
 
@@ -125,9 +126,9 @@ function AddEvent() {
         </div>
       </form>
       {error &&
-        Object.entries(error).map(([key, value]) => {
+        Object.entries(error).map(([key, value], index) => {
           return (
-            <div>
+            <div key={index}>
               Error in field {key}
               <br />
               {value}

@@ -211,6 +211,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://qr-code-project-sigma.netlify.app",
 ]
 
+CSRF_COOKIE_DOMAIN = 'qr-code-project.up.railway.app'
+
 CSP_DEFAULT_SRC = None
 # CSP_SCRIPT_SRC = ("'self'", "'unsafe-eval'", "'unsafe-inline'", "https://qr-code-project-sigma.netlify.app")
 # CSP_CONNECT_SRC = ("'self'", "https://qr-code-project-sigma.netlify.app", "https://qr-code-project.up.railway.app")
@@ -221,5 +223,3 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_HTTPONLY = True

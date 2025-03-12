@@ -29,6 +29,7 @@ function App() {
                         element={<Profile status="Employee"/>}
                     />
 
+                    <Route path="/editProfile" element={<Settings/>}/>
                     <Route path="/event" element={<EventInfo status="Private"/>}/>
                     <Route path="/addEvent" element={<AddEvent/>}/>
                     <Route path="/settings" element={<Settings/>}/>

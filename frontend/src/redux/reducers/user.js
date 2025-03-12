@@ -30,6 +30,27 @@ export const createUser = createAsyncThunk(
     }
 )
 
+export const updateUser = createAsyncThunk(
+    'user/update',
+    async function ({user, navigate}, {rejectWithValue}) {
+        let response;
+        try {
+            response = await axiosInstance.put('/auth/confirm_email', {
+                new_first_name: user.first_name,
+                new_last_name: user.last_name,
+                new_username: user.username,
+                new_password: user.oldPassword,
+                old_password: user.newPassword
+            }); //На бекенді зараз пост
+        } catch (e) {
+            return rejectWithValue(e.response.data.error)
+        }
+
+        navigate('/profile')
+        return response?.data;
+    }
+)
+
 export const confirmEmail = createAsyncThunk(
     'user/confirmEmail',
     async function ({code, email, navigate}, {rejectWithValue}) {
@@ -79,6 +100,17 @@ export const userSlice = createSlice({
             .addCase(confirmEmail.rejected, (state, action) => {
                 state.status = 'rejected';
                 state.error = 'Code you wrote does not match to the code sent to your email'
+            })
+            .addCase(updateUser.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(updateUser.rejected, (state, action) => {
+                state.status = 'rejected';
+                state.error = action.payload;
+            })
+            .addCase(updateUser.fulfilled, (state, action) => {
+                state.status = null;
             })
     },
 })

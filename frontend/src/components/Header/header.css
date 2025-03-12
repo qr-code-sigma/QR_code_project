@@ -12,7 +12,6 @@
 .header-container {
     display: flex;
     justify-content: center;
-    align-items: top;
     flex-direction: row;
     height: 38px;
     width: 100%;

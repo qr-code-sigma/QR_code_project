@@ -34,11 +34,17 @@ function Header({ handleSearch, searchInput, setSearchInput }) {
             className="search-bar"
             required
           />
-          <button type="submit" className="bnt-search">
+          <button type="submit" className="bnt-search" title="Search">
             <i className="fas fa-search"></i>
           </button>
+          <button
+            className="btn-clear-filter-term"
+            title="Delete Filter Term"
+            onClick={flushSearchInput}
+          >
+            <i className="fas fa-times"></i>
+          </button>
         </form>
-        <button onClick={flushSearchInput}>Delete Filter Term</button>
       </div>
     </header>
   );

@@ -134,25 +134,31 @@ button:disabled {
     outline: none;
 }
 
-.bnt-search {
+.bnt-search, .btn-clear-filter-term {
     height: 38px;
     padding: 8px 16px;
     border-radius: 25px;
     border: 2px black solid;
     box-shadow: 4px 4px 0px black;
-    background: var(--btn-secondary);
-    color: var(--text-color);
     font-size: 14px;
     cursor: pointer;
     transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.bnt-search:hover {
+.bnt-search {
+    background: var(--btn-secondary);
+}
+
+.btn-clear-filter-term {
+    background: var(--btn-danger-low);
+}
+
+.bnt-search:hover, .btn-clear-filter-term:hover {
     transform: translate(4px, 4px);
     box-shadow: 0 0 0 black;
 }
 
-.bnt-search:active {
+.bnt-search:active, .btn-clear-filter-term:active {
     transform: translate(5px, 5px);
 }
 

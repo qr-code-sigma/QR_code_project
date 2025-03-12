@@ -36,7 +36,7 @@ def event_list(request):
         events = Event.objects.all()
 
         if user.status == "guest":
-            events = events.filter(status="private")
+            events = events.filter(status="Private")
 
         filters = Q()
         for key, value in request.GET.items():

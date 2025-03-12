@@ -8,6 +8,31 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from qr_code.views import get_qr
 from django.urls import reverse
+
+
+@csrf_exempt
+@require_GET
+def get_user_events_view(request, id):
+    try:
+        user_id = int(id)
+    except ValueError:
+        return JsonResponse({"error": "Invalid id"}, status=400)
+
+    try:
+        user = User.objects.get(pk=user_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    user_request = request.user
+
+    if user_request.username != user.username:
+        return JsonResponse({"error": "User not authorized"}, status=401)
+
+    event_ids = UserEvent.objects.filter(user=user_id).values_list('event', flat=True)
+    events = Event.objects.filter(id=event_ids)
+
+    return JsonResponse({"events": events}, status=200)
+
 @csrf_exempt
 @require_GET
 def get_user(request, id):

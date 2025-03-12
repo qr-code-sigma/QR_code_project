@@ -1,18 +1,12 @@
-from .models import Event
+from .models import Event, User
 from .serializers import EventSerializer
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from django.db.models import Q, Count
-from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.pagination import PageNumberPagination
-
-# when react part is ready this should be configured
-# def default_page(request):
-#     return render(request, 'index.html'
-#     )
 
 def get_paginated_response(events, request):
     events = events.order_by('id')
@@ -31,8 +25,19 @@ def base(request):
 
 @api_view(['GET', 'POST'])
 def event_list(request):
+    user = request.user
+
+    if not user.is_authenticated:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+
+    user = User.objects.get(id=user.id)
+
     if request.method == "GET":
         events = Event.objects.all()
+
+        if user.status == "guest":
+            events = events.filter(status="Public")
+
         filters = Q()
         for key, value in request.GET.items():
             if key in [field.name for field in Event._meta.get_fields()]:

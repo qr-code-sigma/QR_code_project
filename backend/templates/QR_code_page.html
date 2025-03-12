@@ -1,22 +1,45 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{% static 'your_app/QR_code_page.css' %}" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{% static 'your_app/QR_code_page.css' %}" rel="stylesheet" />
     <title>Document</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: #fee2e8;">
-    <section class="qr-page" style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background-color: #fee2e8;">
-        <main class="main-qr" style="display: flex; justify-content: center; align-items: center; flex-direction: column; background-color: #fee2e8; text-align: center; flex: 1; max-width: 745px; gap: 46px;">
-          <h1 style="font-size: 48px;">{{ first_name }} {{ last_name }}</h1>
-          <div>
-            <p style="font-size: 24px;">
-              Is registered for the <b>{{ event }}</b>
-            </p>
-          </div>
-        </main>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #fef2e8">
+    <section
+      class="qr-page"
+      style="
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #fef2e8;
+      "
+    >
+      <main
+        class="main-qr"
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          background-color: #fef2e8;
+          text-align: center;
+          flex: 1;
+          max-width: 745px;
+          gap: 46px;
+        "
+      >
+        <h1 style="font-size: 48px">{{ first_name }} {{ last_name }}</h1>
+        <div>
+          <p style="font-size: 24px">
+            Is registered for the <b>{{ event }}</b>
+          </p>
+        </div>
+      </main>
     </section>
-</body>
+  </body>
 </html>

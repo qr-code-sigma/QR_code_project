@@ -2,12 +2,24 @@ import React from "react";
 import "./profilePage.css";
 import ProfileHeader from "../../components/ProfileHeader/ProfileHeader";
 import Footer from "../../components/Footer/Footer.jsx";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 
 function ProfilePage() {
-
-  const { userData } = useSelector(state => state.auth)
+  const { userData } = useSelector((state) => state.auth);
   console.log(userData);
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "guest":
+        return "status-public";
+      case "employee":
+        return "status-employee";
+      case "admin":
+        return "status-admin";
+      default:
+        return "";
+    }
+  };
 
   return (
     <div className="profile-page-container">
@@ -15,7 +27,10 @@ function ProfilePage() {
       <main className="profile-main-content">
         <section className="profile-info">
           <div className="status">
-            Status: <span className='status'>{userData.status}</span>
+            Status:
+            <div className={`user-status ${getStatusClass(userData.status)}`}>
+              {userData.status}
+            </div>
           </div>
           <div className="email">
             Email: <span>{userData.email}</span>

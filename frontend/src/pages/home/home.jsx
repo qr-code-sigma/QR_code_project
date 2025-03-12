@@ -93,7 +93,19 @@ function Home() {
   };
 
   if (getMeStatus === "loading" || loading) {
-    return <h1>Loading...</h1>;
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100%"
+        }}
+      >
+        <Loading />
+      </div>
+    );
   }
 
   if (getMeStatus === "resolved" || getMeStatus === "rejected") {

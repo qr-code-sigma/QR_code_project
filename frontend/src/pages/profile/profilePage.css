@@ -40,7 +40,7 @@
     align-items: center;
     text-align: center;
     height: 25px;
-    width: 69px;
+    width: auto;
     border: 1px solid black;
     border-radius: 15px;
     padding: 6px 12px;
@@ -48,15 +48,15 @@
     margin: 0;
 }
 
-.user-status.public {
+.status-public {
     background: var(--badge-public);
 }
 
-.user-status.employee {
+.status-employee {
     background: var(--badge-employee);
 }
 
-.user-status.admin {
+.status-admin {
     background: var(--badge-private);
 }
 

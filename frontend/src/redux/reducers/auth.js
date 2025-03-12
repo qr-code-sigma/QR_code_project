@@ -1,6 +1,5 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import axiosInstance from "../../config/axiosConfig.js";
-import log from "eslint-plugin-react/lib/util/log.js";
 
 export const getMe = createAsyncThunk(
     "user/checkIsAuth",

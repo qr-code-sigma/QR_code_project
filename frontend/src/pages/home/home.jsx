@@ -9,6 +9,7 @@ import axiosInstance from "../../config/axiosConfig.js";
 import { useEffect, useState } from "react";
 import getAndRemoveStorageItem from "../../utils/getAndRemoveStorageItem.js";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../components/Loading/loading.jsx";
 
 function Home() {
   const { userData, isAuthenticated, getMeStatus } = useSelector(

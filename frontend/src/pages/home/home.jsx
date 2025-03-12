@@ -13,7 +13,7 @@ import Loading from "../../components/Loading/loading.jsx";
 
 function Home() {
   const { userData, isAuthenticated, getMeStatus } = useSelector(
-    (state) => state.auth,
+    (state) => state.auth
   );
   const [events, setEvents] = useState([]);
   const [amountOfPages, setAmountOfPages] = useState(1);
@@ -121,7 +121,13 @@ function Home() {
             />
             <div className="events-container">
               {userData.status === "admin" && (
-                <button onClick={toAddPage}>Add new</button>
+                <button
+                  className="add-event-button"
+                  title="Add new event"
+                  onClick={toAddPage}
+                >
+                  <i className="fas fa-plus"></i>
+                </button>
               )}
 
               <Events events={events} />

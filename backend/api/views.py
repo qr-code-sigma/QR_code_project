@@ -37,8 +37,6 @@ def event_list(request):
 
         if user.status == "guest":
             events = events.filter(status="public")
-        elif user.status in ("employee", "admin"):
-            events = events.filter(Q(status="public") | Q(status="private"))
 
         filters = Q()
         for key, value in request.GET.items():

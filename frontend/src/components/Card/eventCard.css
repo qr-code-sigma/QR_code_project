@@ -88,5 +88,5 @@
 }
 
 .event-status.private {
-    background: var(--badge-private);
+    background: var(--badge-employee);
 }

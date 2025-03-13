@@ -127,4 +127,4 @@ def edit_user_view(request):
 
     print("Serializer is not valid")
     print(serializer.errors)
-    return JsonResponse({"error": serializer.errors[0]}, status=400)
+    return JsonResponse({"error": serializer.errors}, status=400)

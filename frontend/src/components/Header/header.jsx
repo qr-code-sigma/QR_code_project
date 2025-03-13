@@ -38,6 +38,7 @@ function Header({ handleSearch, searchInput, setSearchInput }) {
             <i className="fas fa-search"></i>
           </button>
           <button
+            type="button"
             className="btn-clear-filter-term"
             title="Delete Filter Term"
             onClick={flushSearchInput}

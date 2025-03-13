@@ -3,11 +3,12 @@ import "./profilePage.css";
 import ProfileHeader from "../../components/ProfileHeader/ProfileHeader";
 import Footer from "../../components/Footer/Footer.jsx";
 import {useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 function ProfilePage() {
 
   const { userData } = useSelector(state => state.auth)
-  console.log(userData);
+  const navigate = useNavigate();
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -38,7 +39,7 @@ function ProfilePage() {
           </div>
         </section>
         <section className="to-settings">
-          <button className="btn-settings">
+          <button onClick={() => navigate('/editProfile')} className="btn-settings">
             <span>Settings</span>
           </button>
         </section>

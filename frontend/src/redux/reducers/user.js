@@ -48,8 +48,8 @@ export const updateUser = createAsyncThunk(
             return rejectWithValue(e.response.data.error)
         }
 
-        window.location.reload();
         navigate('/profile')
+        window.location.reload();
         return response?.data;
     }
 )
@@ -79,11 +79,6 @@ const initialState = {
 export const userSlice = createSlice({
     name: 'userSlice',
     initialState,
-    reducers: {
-        test: (state, action) => {
-
-        }
-    },
     extraReducers: (builder) => {
         builder
             .addCase(createUser.pending, (state) => {

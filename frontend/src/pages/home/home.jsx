@@ -23,9 +23,32 @@ function Home() {
   const [nextPageURL, setNextPageURL] = useState(null);
   const [previousPageURL, setPreviousPageURL] = useState(null);
   const navigate = useNavigate();
+  const [searchInput, setSearchInput] = useState("");
 
   const toAddPage = () => {
     navigate("/addEvent");
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const savedPage = localStorage.getItem("CURRENT_PAGE") || 1;
+      const savedInput = localStorage.getItem("SEARCH_INPUT") || "";
+
+      setPage(parseInt(savedPage));
+      setSearchInput(savedInput);
+
+      fetchEventsWithSearch(savedInput, savedPage);
+    }
+  }, [isAuthenticated]);
+
+  const fetchEventsWithSearch = (term, pageNum) => {
+    const url = term
+      ? `/events/${term}/?page=${pageNum}`
+      : `/events?page=${pageNum}`;
+
+    fetchEvents(url).then(() => {
+      console.log("Events were fetched with search term:", term);
+    });
   };
 
   const fetchEvents = async (url) => {
@@ -34,7 +57,7 @@ function Home() {
     try {
       response = await axiosInstance.get(url);
       const { count, next, previous, results } = response.data;
-      setAmountOfPages(Math.ceil(count / 50));
+      setAmountOfPages(Math.ceil(count / 50) || 1);
       setEvents(results);
       setNextPageURL(next);
       setPreviousPageURL(previous);
@@ -53,15 +76,12 @@ function Home() {
     }
   };
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      const savedPage = localStorage.getItem("CURRENT_PAGE") || 1;
-      setPage(parseInt(savedPage));
-      fetchEvents(`/events?page=${savedPage}`).then(() => {
-        console.log("Events were fetched");
-      });
-    }
-  }, [isAuthenticated]);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(1);
+    localStorage.setItem("SEARCH_INPUT", searchInput);
+    fetchEventsWithSearch(searchInput, 1);
+  };
 
   const handlePageChange = (url, futurePage) => {
     if (isAuthenticated) {
@@ -94,10 +114,20 @@ function Home() {
       <div className="home-container">
         {isAuthenticated ? (
           <>
-            <Header />
+            <Header
+              handleSearch={handleSearch}
+              searchInput={searchInput}
+              setSearchInput={setSearchInput}
+            />
             <div className="events-container">
               {userData.status === "admin" && (
-                <button onClick={toAddPage}>Add new</button>
+                <button
+                  className="add-event-button"
+                  title="Add new event"
+                  onClick={toAddPage}
+                >
+                  <i className="fas fa-plus"></i>
+                </button>
               )}
 
               <Events events={events} />

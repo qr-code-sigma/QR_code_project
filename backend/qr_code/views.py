@@ -5,7 +5,10 @@ import qrcode
 import qrcode.constants
 from api.models import UserEvent, User, Event
 from django.views.decorators.csrf import csrf_exempt
+from django.core.signing import Signer
 
+
+signer = Signer()
 @csrf_exempt
 @require_GET
 def get_qr(request, event_id):
@@ -13,27 +16,30 @@ def get_qr(request, event_id):
         return JsonResponse({"error":"User not authenticated"}, status = 401)
     try:
         event_user = UserEvent.objects.get(event_id = event_id, user_id = request.user.id)
+        
     except Exception:
         return JsonResponse({"details":"User is not registered for this event", "isRegistered":False}, status = 200) 
     print(f"Creating a QR code for invitaion {event_user} for user {request.user.id} on event {event_id}")
     try:
+        encrypted_id = signer.sign(event_user.id)
         qr = qrcode.QRCode( 
             version=1,  
             error_correction=qrcode.constants.ERROR_CORRECT_L, 
             box_size=10, 
             border = 4) 
-        qr.add_data(f'https://qr-code-project.up.railway.app/api/v1/qr/invitation/{event_user.id}')
+        qr.add_data(f'https://qr-code-project.up.railway.app/api/v1/qr/invitation/{encrypted_id}')
     except Exception:
-        return JsonResponse({"error": "Coul not create a QR code"}, status = 500) 
+        return JsonResponse({"error": "Could not create a QR code"}, status = 500) 
     code = qr.get_matrix() 
     return JsonResponse({"code":code, "isRegistered":True}, status = 200) 
     
 
 @require_GET
-def render_qr_page(request, event_user_id):
+def render_qr_page(request, encrypted_id):
     try:
         print("Trying to get an object...")
         print(UserEvent.objects.all())
+        event_user_id = signer.unsign(encrypted_id)
         event_user = UserEvent.objects.get(id=event_user_id)
         print(f"Event user: {event_user}")
 

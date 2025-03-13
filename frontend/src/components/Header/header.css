@@ -12,9 +12,27 @@
 .header-container {
     display: flex;
     justify-content: center;
-    align-items: top;
     flex-direction: row;
     height: 38px;
     width: 100%;
     gap: 14px;
+}
+
+@media (max-width: 480px) {
+    .header-container {
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .btn-profile {
+        width: auto;
+    }
+
+    .search-form {
+        width: 100%;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
 }

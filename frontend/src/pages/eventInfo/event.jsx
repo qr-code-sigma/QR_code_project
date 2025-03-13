@@ -129,9 +129,17 @@ function Event() {
             <button className="btn-download">Download PDF</button>
           </div>
         ) : (
-          <button className="btn-lg" onClick={registerForTheEvent}>
-            <span>Register</span>
-          </button>
+          <div className="register-buttons-container">
+            <button className="btn-danger">
+              <span>Remove</span>
+            </button>
+            <button className="btn-lg" onClick={registerForTheEvent}>
+              <span>Register</span>
+            </button>
+            <button className="btn-default">
+              <span>Edit</span>
+            </button>
+          </div>
         )}
       </main>
     </div>

@@ -1,63 +1,55 @@
-from .models import Event
+from .models import Event, User
 from .serializers import EventSerializer
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from django.db.models import Q, Count
-from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.pagination import PageNumberPagination
 
-# when react part is ready this should be configured
-# def default_page(request):
-#     return render(request, 'index.html'
-#     )
-
+def get_paginated_response(events, request):
+    events = events.order_by('id')
+    paginator = PageNumberPagination()
+    paginator.page_size = 48
+    paginated_events = paginator.paginate_queryset(events, request)
+    serializer = EventSerializer(paginated_events, many=True)
+    response = paginator.get_paginated_response(serializer.data)
+    if response.data.get("next"):
+        response.data["next"] = response.data["next"].replace("http://", "https://")
+    if response.data.get("previous"):
+        response.data["previous"] = response.data["previous"].replace("http://", "https://")
+    return response
 def base(request):
     return HttpResponse("<h1>Hello</h1>")
 
 @api_view(['GET', 'POST'])
 def event_list(request):
+    user = request.user
+
+    if not user.is_authenticated:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+
+    user = User.objects.get(id=user.id)
+
     if request.method == "GET":
-        print("Received GET request for event list")
-
         events = Event.objects.all()
+
+        if user.status == "guest":
+            events = events.filter(status="Public")
+
         filters = Q()
-
-        print(f"Filtering parameters: {dict(request.GET)}")
-
         for key, value in request.GET.items():
             if key in [field.name for field in Event._meta.get_fields()]:
                 filters &= Q(**{key: value})
         events = events.filter(filters)
-        print(f"Number of events after filtering: {events.count()}")
-        events = events.order_by('id')
         events = events.annotate(count=Count('userevent__user'))
-        print(f"Events: {events}")
-        paginator = PageNumberPagination()
-        paginator.page_size = 48
-        paginated_events = paginator.paginate_queryset(events, request)
-        if paginated_events is None:
-            print("Pagination returned an empty event list")
-        serializer = EventSerializer(paginated_events, many=True)
-        response = paginator.get_paginated_response(serializer.data)
-        print(f"Number of events in response: {len(serializer.data)}")
-        print(f"Next page: {response.data.get('next')}")
-        print(f"Previous page: {response.data.get('previous')}")
-        if response.data.get("next"):
-            response.data["next"] = response.data["next"].replace("http://", "https://")
-
-        if response.data.get("previous"):
-            response.data["previous"] = response.data["previous"].replace("http://", "https://")
-        print(response.data)
-        return response
+        return get_paginated_response(events, request)
 
     elif request.method == "POST":
-
         serializer = EventSerializer(data=request.data)
         if serializer.is_valid():
-            event = serializer.save()
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -97,5 +89,5 @@ def event_detail(request, id):
 @api_view(['GET'])
 def events_by_pattern(request, pattern):
     events = Event.objects.filter(name__contains=pattern)
-    serializer = EventSerializer(events, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    events = events.annotate(count=Count('userevent__user'))
+    return get_paginated_response(events, request)

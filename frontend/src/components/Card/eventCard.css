@@ -12,6 +12,7 @@
     box-shadow: 4px 4px 0px black;
     transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     text-align: center;
+    cursor: pointer;
 }
 
 .event-card:hover {
@@ -58,11 +59,9 @@
 .event-location,
 .event-date {
     font-size: 12px;
-    color: var(--text-color);
     font-style: italic;
-    margin: 0px;
-    overflow: hidden;
     text-align: left;
+    width: 100%;
 }
 
 .event-location {
@@ -88,5 +87,7 @@
 }
 
 .event-status.private {
-    background: var(--badge-private);
+    background: var(--badge-employee);
 }
+
+@media (max-width: 480px) {}

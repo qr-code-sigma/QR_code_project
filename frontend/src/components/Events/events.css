@@ -6,6 +6,13 @@
     gap: 26px;
     justify-content: center;
     align-items: start;
-    margin-top: 42px;
+    margin-top: 26px;
     margin-bottom: 42px;
+}
+
+@media (max-width: 480px) {
+    .events-content {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
 }

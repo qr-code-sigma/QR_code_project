@@ -28,6 +28,7 @@
 .event-page-title {
     font-size: 48px;
     font-weight: 700;
+    text-align: center;
 }
 
 .places-badge {
@@ -53,6 +54,16 @@
     align-items: center;
     width: 50%;
     gap: 10px;
+}
+
+.register-buttons-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    gap: 25px;
+    margin-top: 20px;
 }
 
 .event-page-description, .event-page-date, .event-page-location, .event-page-status {
@@ -127,11 +138,7 @@
 }
 
 .qr-code-placeholder {
-    width: 205px;
-    height: 205px;
+    width: 225px;
+    height: 225px;
     background-color: white;
-}
-
-.btn-lg {
-    margin-top: 20px;
 }

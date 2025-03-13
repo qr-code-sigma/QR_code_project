@@ -110,7 +110,15 @@ def edit_user_view(request):
             user.set_password(data["new_password"])
             user.save()
 
-        return JsonResponse({"details": "User was successfully updated"}, status=200)
+        return JsonResponse({"details": "User was successfully updated", 
+                             "userData": 
+                                {
+                                    "username":user.username,
+                                    "first_name":user.first_name,
+                                    "last_name":user.last_name,
+                                    "email":user.email,
+                                    "status":user.status
+                                }}, status=200)
 
     print("Serializer is not valid")
     print(serializer.errors)

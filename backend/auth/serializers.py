@@ -36,3 +36,12 @@ class UserSerizalizer(serializers.ModelSerializer):
         except Exception:
             print("User already exists")
             raise serializers.ValidationError({"error":"Could not create user"})
+  
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            if attr == "password":
+                instance.set_password(value)  
+            else:
+                setattr(instance, attr, value)
+        instance.save()
+        return instance

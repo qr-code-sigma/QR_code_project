@@ -74,48 +74,43 @@ def event_registration_view(request, event_id):
 @csrf_exempt
 def edit_user_view(request):
     if request.method != 'PUT':
-        return JsonResponse({"erorr":"Invalid method"}, status = 405)
-    try:
-        user = request.user
-    except Exception:
-        return JsonResponse({ "error": "User unathorized" }, status = 401)
+        return JsonResponse({"error": "Invalid method"}, status=405)
 
-    data = json.loads(request.body)
-    print(data)
+    user = request.user
+    if not user.is_authenticated:
+        return JsonResponse({"error": "User unauthorized"}, status=401)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON data"}, status=400)
+
     if not data.get('old_password'):
-        return JsonResponse({'error':"old password not specified"}, status = 403)
-    new_first_name = data.get("new_first_name") if data.get('new_first_name') else user.first_name
-    new_last_name = data.get("new_last_name") if data.get('new_last_name') else user.last_name
-    new_username = data.get("new_username") if data.get('new_username') else user.username
-    new_password = data.get("new_password") if data.get('new_password') else user.password
-    new_data = {"first_name":new_first_name, "last_name":new_last_name, "username":new_username, "password":new_password}
-    print(new_data)
-    serializer = UserSerizalizer(data=new_data)
-    print(serializer)
-    
-    if new_first_name:
-        if len(new_first_name) > 50:
-            return JsonResponse({ "error": "First name is too long" }, status = 400)
+        return JsonResponse({'error': "Old password not specified"}, status=403)
 
-    if new_last_name:
-        if len(new_last_name) > 50:
-            return JsonResponse({ "error": "Last name is too long" }, status = 400)
+    if not user.check_password(data["old_password"]):
+        return JsonResponse({'error': "Old password is incorrect"}, status=403)
 
-    if new_username:
-        if len(new_username) > 50:
-            return JsonResponse({ "error": "Username is too long" }, status = 400)
+    new_data = {
+        "first_name": data.get("new_first_name", user.first_name),
+        "last_name": data.get("new_last_name", user.last_name),
+        "username": data.get("new_username", user.username),
+    }
 
-    if new_password:
-        if len(new_password) > 100:
-            return JsonResponse({ "error": "Password is too long" }, status = 400)
-    try:
-        if serializer.is_valid():
-            print("serializer is valid")
-            user = serializer.save()
+    serializer = UserSerizalizer(instance=user, data=new_data, partial=True)
+
+    if serializer.is_valid():
+        print("Serializer is valid")
+        user = serializer.save()
+        if "new_password" in data and data["new_password"]:
+            if len(data["new_password"]) > 100:
+                return JsonResponse({"error": "Password is too long"}, status=400)
+
+            user.set_password(data["new_password"])
             user.save()
-        else:
-            print("serializer is not valid")
-            print(serializer.errors)
-    except Exception:
-        return JsonResponse({'details':"Could not create user"}, status = 400)
-    return JsonResponse({"details": "User was successfully updated"}, status = 200)
+
+        return JsonResponse({"details": "User was successfully updated"}, status=200)
+
+    print("Serializer is not valid")
+    print(serializer.errors)
+    return JsonResponse({"error": serializer.errors}, status=400)

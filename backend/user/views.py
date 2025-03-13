@@ -6,9 +6,8 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
-from qr_code.views import get_qr
 from django.urls import reverse
-
+from auth.serializers import UserSerizalizer
 
 @csrf_exempt
 @require_GET
@@ -73,19 +72,24 @@ def event_registration_view(request, event_id):
     return redirect(reverse("qr_code:get_qr_code", args=[event_id]))
 
 @csrf_exempt
-@require_POST
-def edit_user_view(request, id):
+def edit_user_view(request):
+    if request.method != 'PUT':
+        return JsonResponse({"erorr":"Invalid method"}, status = 405)
     try:
-        user = User.objects.get(id=id)
-    except ObjectDoesNotExist:
-        return JsonResponse({ "error": "User does not exist" }, status = 404)
+        user = request.user
+    except Exception:
+        return JsonResponse({ "error": "User unathorized" }, status = 401)
 
     data = json.loads(request.body)
-    new_first_name = data.get("first_name")
-    new_last_name = data.get("last_name")
-    new_username = data.get("username")
-    new_password = data.get("password")
-
+    if not data.get('old_password'):
+        return JsonResponse({'error':"old password not specified"}, status = 403)
+    new_first_name = data.get("first_name") if data.get('first_name') else user.first_name
+    new_last_name = data.get("last_name") if data.get('last_name') else user.last_name
+    new_username = data.get("username") if data.get('username') else user.username
+    new_password = data.get("new_password") if data.get('new_password') else user.password
+    new_data = {"first_name":new_first_name, "last_name":new_last_name, "username":new_username, "password":new_password}
+    serializer = UserSerizalizer(data=new_data)
+    
     if new_first_name:
         if len(new_first_name) > 50:
             return JsonResponse({ "error": "First name is too long" }, status = 400)
@@ -105,16 +109,11 @@ def edit_user_view(request, id):
     if new_password:
         if len(new_password) > 100:
             return JsonResponse({ "error": "Password is too long" }, status = 400)
-
-
-    if new_first_name is not None:
-        user.first_name = new_first_name
-    if new_last_name is not None:
-        user.last_name = new_last_name
-    if new_username is not None:
-        user.username = new_username
-    if new_password is not None:
-        user.password = new_password
-    user.save()
+    try:
+        if serializer.is_valid():
+            user = serializer.save()
+            user.save()
+    except Exception:
+        return JsonResponse({'details':"Could not create user"})
 
     return JsonResponse({"details": "User was successfully updated"}, status = 200)

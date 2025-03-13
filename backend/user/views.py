@@ -81,6 +81,7 @@ def edit_user_view(request):
         return JsonResponse({ "error": "User unathorized" }, status = 401)
 
     data = json.loads(request.body)
+    print(data)
     if not data.get('old_password'):
         return JsonResponse({'error':"old password not specified"}, status = 403)
     new_first_name = data.get("first_name") if data.get('first_name') else user.first_name
@@ -88,7 +89,9 @@ def edit_user_view(request):
     new_username = data.get("username") if data.get('username') else user.username
     new_password = data.get("new_password") if data.get('new_password') else user.password
     new_data = {"first_name":new_first_name, "last_name":new_last_name, "username":new_username, "password":new_password}
+    print(new_data)
     serializer = UserSerizalizer(data=new_data)
+    print(serializer)
     
     if new_first_name:
         if len(new_first_name) > 50:
@@ -107,9 +110,12 @@ def edit_user_view(request):
             return JsonResponse({ "error": "Password is too long" }, status = 400)
     try:
         if serializer.is_valid():
+            print("serializer is valid")
             user = serializer.save()
             user.save()
+        else:
+            print("serializer is not valid")
+            print(serializer.errors)
     except Exception:
-        return JsonResponse({'details':"Could not create user"})
-
+        return JsonResponse({'details':"Could not create user"}, status = 400)
     return JsonResponse({"details": "User was successfully updated"}, status = 200)

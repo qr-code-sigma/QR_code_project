@@ -8,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.urls import reverse
 from auth.serializers import UserSerizalizer
+from django.contrib.auth.password_validation import validate_password
 
 @csrf_exempt
 @require_GET
@@ -104,9 +105,13 @@ def edit_user_view(request):
         print("Serializer is valid")
         user = serializer.save()
         if "new_password" in data and data["new_password"]:
+
             if len(data["new_password"]) > 100:
                 return JsonResponse({"error": "Password is too long"}, status=400)
-
+            try:
+                validate_password(data['new_password'], user)
+            except Exception:
+                return JsonResponse({"error":"Invalid password"}, status = 403)
             user.set_password(data["new_password"])
             user.save()
 

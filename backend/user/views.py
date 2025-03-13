@@ -102,10 +102,6 @@ def edit_user_view(request):
         if len(new_username) > 50:
             return JsonResponse({ "error": "Username is too long" }, status = 400)
 
-        existing_user = User.objects.exclude(pk=id).filter(username=new_username)
-        if existing_user:
-            return JsonResponse({ "error": "User already exists" }, status = 404)
-
     if new_password:
         if len(new_password) > 100:
             return JsonResponse({ "error": "Password is too long" }, status = 400)

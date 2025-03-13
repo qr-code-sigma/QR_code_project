@@ -92,10 +92,11 @@ def edit_user_view(request):
         return JsonResponse({'error': "Old password is incorrect"}, status=403)
 
     new_data = {
-        "first_name": data.get("new_first_name", user.first_name),
-        "last_name": data.get("new_last_name", user.last_name),
-        "username": data.get("new_username", user.username),
+        "first_name": data.get("new_first_name") or user.first_name,
+        "last_name": data.get("new_last_name") or user.last_name,
+        "username": data.get("new_username") or user.username,
     }
+
 
     serializer = UserSerizalizer(instance=user, data=new_data, partial=True)
 

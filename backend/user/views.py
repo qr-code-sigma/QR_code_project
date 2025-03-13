@@ -84,9 +84,9 @@ def edit_user_view(request):
     print(data)
     if not data.get('old_password'):
         return JsonResponse({'error':"old password not specified"}, status = 403)
-    new_first_name = data.get("first_name") if data.get('first_name') else user.first_name
-    new_last_name = data.get("last_name") if data.get('last_name') else user.last_name
-    new_username = data.get("username") if data.get('username') else user.username
+    new_first_name = data.get("new_first_name") if data.get('new_first_name') else user.first_name
+    new_last_name = data.get("new_last_name") if data.get('new_last_name') else user.last_name
+    new_username = data.get("new_username") if data.get('new_username') else user.username
     new_password = data.get("new_password") if data.get('new_password') else user.password
     new_data = {"first_name":new_first_name, "last_name":new_last_name, "username":new_username, "password":new_password}
     print(new_data)

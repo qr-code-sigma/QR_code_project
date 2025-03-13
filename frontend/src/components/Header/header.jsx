@@ -22,7 +22,7 @@ function Header({ handleSearch, searchInput, setSearchInput }) {
   return (
     <header className="header">
       <div className="header-container">
-        <button onClick={navigateInTime} className="btn-primary">
+        <button onClick={navigateInTime} className="btn-primary btn-profile">
           <span>Profile</span>
         </button>
         <form onSubmit={handleSearch} className="search-form">

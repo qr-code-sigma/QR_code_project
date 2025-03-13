@@ -89,3 +89,5 @@
 .event-status.private {
     background: var(--badge-employee);
 }
+
+@media (max-width: 480px) {}

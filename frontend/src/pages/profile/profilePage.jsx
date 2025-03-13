@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import "./profilePage.css";
 import ProfileHeader from "../../components/ProfileHeader/ProfileHeader";
 import Footer from "../../components/Footer/Footer.jsx";

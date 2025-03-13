@@ -27,7 +27,7 @@ function Settings() {
             setIsDisabled(true)
             return;
         }
-        debugger
+
         for (const [key, value] of Object.entries(formData)) {
             if (userData[key]) {
                 if (userData[key] === formData[key]) {                      //If current data is equal to new data, then button should be disabled
@@ -39,7 +39,7 @@ function Settings() {
                 setIsDisabled(true)
                 return;
             }
-            if(value.length > 5 && key !== 'oldPassword') {
+            if(value.length > 4 && key !== 'oldPassword') {
                 isSatisfactory = true;
             }
         }
@@ -96,10 +96,22 @@ function Settings() {
                     <span>Confirm</span>
                 </button>
             </section>
-            {status === 'loading' ? <>Loading...</> :
-             error ? error : null}
+            {status === 'loading' && <>Loading...</>}
+            {error ? typeof(error) === 'string' ? error :
+                Object.entries(error).map(([key, value], index) => {
+                    return (
+                        <div key={index}>
+                            Error in field {key}
+                            <br />
+                            {value}
+                        </div>
+                    );
+                }) : null
+            }
         </div>
     );
 }
 
 export default Settings;
+
+//ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd

@@ -1,5 +1,6 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import axiosInstance from '../../config/axiosConfig.js'
+import {updateUserData} from "./auth.js";
 
 export const createUser = createAsyncThunk(
     'user/create',
@@ -32,20 +33,22 @@ export const createUser = createAsyncThunk(
 
 export const updateUser = createAsyncThunk(
     'user/update',
-    async function ({user, navigate}, {rejectWithValue}) {
+    async function ({user, navigate}, {rejectWithValue,dispatch}) {
         let response;
         try {
-            response = await axiosInstance.put('/auth/confirm_email', {
+            response = await axiosInstance.put('/users/edit/', {
                 new_first_name: user.first_name,
                 new_last_name: user.last_name,
                 new_username: user.username,
-                new_password: user.oldPassword,
-                old_password: user.newPassword
+                old_password: user.oldPassword,
+                new_password: user.newPassword
             }); //На бекенді зараз пост
         } catch (e) {
+            console.log(e.response.data.error)
             return rejectWithValue(e.response.data.error)
         }
 
+        window.location.reload();
         navigate('/profile')
         return response?.data;
     }

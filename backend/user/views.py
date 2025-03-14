@@ -11,6 +11,8 @@ from auth.serializers import UserSerizalizer
 from django.contrib.auth.password_validation import validate_password
 from api.views import get_paginated_response
 from django.db.models import Count
+from rest_framework.pagination import PageNumberPagination
+from api.serializers import EventSerializer
 
 @require_GET
 def get_user_events_view(request):
@@ -24,7 +26,23 @@ def get_user_events_view(request):
         print(f"EVents: {events}")
         events = events.annotate(count=Count('userevent__user'))
         print(f"annontated events: {events}")
-        return get_paginated_response(events, request)
+        try:
+            print(f"event0: {events[0]}")
+        except Exception:
+            print("no")
+        events = events.order_by('id')
+        paginator = PageNumberPagination()
+        paginator.page_size = 48
+        print("Crit")
+        paginated_events = paginator.paginate_queryset(events, request)
+        print("crit2")
+        serializer = EventSerializer(paginated_events, many=True)
+        response = paginator.get_paginated_response(serializer.data)
+        if response.data.get("next"):
+            response.data["next"] = response.data["next"].replace("http://", "https://")
+        if response.data.get("previous"):
+            response.data["previous"] = response.data["previous"].replace("http://", "https://")
+        return response
     except Event.DoesNotExist:
         return JsonResponse({"error": "Events not found"}, status=404)
     except Exception as e:

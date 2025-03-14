@@ -14,7 +14,7 @@ class Event(models.Model):
         db_table = "events"
 
     def __str__(self):
-        return f"{self.name}"
+        return f"Name:{self.name}, id:{self.id}"
 
 class User(AbstractUser):
     id = models.AutoField(primary_key=True)

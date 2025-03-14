@@ -10,30 +10,25 @@ from django.urls import reverse
 from auth.serializers import UserSerizalizer
 from django.contrib.auth.password_validation import validate_password
 
-@csrf_exempt
 @require_GET
-def get_user_events_view(request, id):
-    try:
-        user_id = int(id)
-    except ValueError:
-        return JsonResponse({"error": "Invalid id"}, status=400)
+def get_user_events_view(request):
+    user = request.user
+    if not user.is_authenticated:
+        return JsonResponse({"error": "User not authenticated"}, status=401)
 
     try:
-        user = User.objects.get(pk=user_id)
-    except ObjectDoesNotExist:
-        return JsonResponse({"error": "User not found"}, status=404)
+        event_ids = UserEvent.objects.filter(user=user).values_list('event', flat=True)
+        events = Event.objects.filter(id__in=event_ids)
 
-    user_request = request.user
+        event_data = list(events.values("id", "name", "date", "location"))  
 
-    if user_request.username != user.username:
-        return JsonResponse({"error": "User not authorized"}, status=401)
+        return JsonResponse({"events": event_data}, status=200)
+    except Event.DoesNotExist:
+        return JsonResponse({"error": "Events not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-    event_ids = UserEvent.objects.filter(user=user_id).values_list('event', flat=True)
-    events = Event.objects.filter(id=event_ids)
 
-    return JsonResponse({"events": events}, status=200)
-
-@csrf_exempt
 @require_GET
 def get_user(request, id):
     try:
@@ -47,14 +42,12 @@ def get_user(request, id):
     }
     return JsonResponse(response, status = 200)
 
-@csrf_exempt
 @require_GET
 def get_users(request):
     users = User.objects.all()
     user_list = [{"username":user.username, "first_name":user.first_name, "last_name":user.last_name} for user in users]
     return JsonResponse({"users":user_list}, status = 200)
 
-@csrf_exempt
 @require_POST
 def event_registration_view(request, event_id):
     try:
@@ -72,7 +65,6 @@ def event_registration_view(request, event_id):
 
     return redirect(reverse("qr_code:get_qr_code", args=[event_id]))
 
-@csrf_exempt
 def edit_user_view(request):
     if request.method != 'PUT':
         return JsonResponse({"error": "Invalid method"}, status=405)

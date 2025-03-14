@@ -13,14 +13,14 @@ from api.views import get_paginated_response
 from django.db.models import Count
 from rest_framework.pagination import PageNumberPagination
 from api.serializers import EventSerializer
-from rest_framework.request import Request
-from django.core.handlers.wsgi import WSGIRequest
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-@require_GET
-def get_user_events_view(request: WSGIRequest):
+@api_view(['GET'])
+def get_user_events_view(request):
     user = request.user
     if not user.is_authenticated:
-        return JsonResponse({"error": "User not authenticated"}, status=401)
+        return Response({"error": "User not authenticated"}, status=401)
     
     try:
         event_ids = UserEvent.objects.filter(user=user).values_list('event', flat=True)
@@ -28,12 +28,10 @@ def get_user_events_view(request: WSGIRequest):
         events = events.annotate(count=Count('userevent__user'))
         events = events.order_by('id')
         
-        drf_request = Request(request)
-        
         paginator = PageNumberPagination()
         paginator.page_size = 48
         
-        paginated_events = paginator.paginate_queryset(events, drf_request)  
+        paginated_events = paginator.paginate_queryset(events, request)
         serializer = EventSerializer(paginated_events, many=True)
         response = paginator.get_paginated_response(serializer.data)
         
@@ -45,11 +43,10 @@ def get_user_events_view(request: WSGIRequest):
         return response
         
     except Event.DoesNotExist:
-        return JsonResponse({"error": "Events not found"}, status=404)
+        return Response({"error": "Events not found"}, status=404)
     except Exception as e:
         print(f"Exception 500: {str(e)}")
-        return JsonResponse({"error": str(e)}, status=500)
-
+        return Response({"error": str(e)}, status=500)
 
 @require_GET
 def get_user(request, id):

@@ -14,7 +14,9 @@ def get_paginated_response(events, request):
     events = events.order_by('id')
     paginator = PageNumberPagination()
     paginator.page_size = 48
+    print("Crit")
     paginated_events = paginator.paginate_queryset(events, request)
+    print("crit2")
     serializer = EventSerializer(paginated_events, many=True)
     response = paginator.get_paginated_response(serializer.data)
     if response.data.get("next"):

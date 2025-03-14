@@ -36,13 +36,13 @@ export const updateUser = createAsyncThunk(
     async function ({user, navigate}, {rejectWithValue,dispatch}) {
         let response;
         try {
-            response = await axiosInstance.put('/users/edit/', {
+            response = await axiosInstance.put('/users/edit', {
                 new_first_name: user.first_name,
                 new_last_name: user.last_name,
                 new_username: user.username,
                 old_password: user.oldPassword,
                 new_password: user.newPassword
-            }); //На бекенді зараз пост
+            });
         } catch (e) {
             console.log(e.response.data.error)
             return rejectWithValue(e.response.data.error)

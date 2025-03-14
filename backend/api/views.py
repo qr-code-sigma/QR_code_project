@@ -9,6 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.pagination import PageNumberPagination
 from django.utils.timezone import now
 from datetime import timedelta
+import json
 
 def get_paginated_response(events, request):
     events = events.order_by('id')
@@ -86,7 +87,27 @@ def event_detail(request, id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'PATCH':
-        serializer = EventSerializer(event, data=request.data, partial=True)
+        try:
+            data = json.loads(request.body)
+        except Exception:
+            return JsonResponse({"details":"Could not decode the data"}, status = 400)
+        
+        new_name = data.get("name") or None
+        new_location = data.get("location") or None
+        new_places = data.get('places') or None
+        new_date = data.get('date') or None
+        new_desription = data.get('description') or None
+        new_status = data.get('status') or None
+        new_data = {
+            "name":new_name,
+            "description":new_desription,
+            "location":new_location,
+            "places":new_places,
+            "date":new_date,
+            "status":new_status
+        }
+
+        serializer = EventSerializer(event, data=new_data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

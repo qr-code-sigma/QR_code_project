@@ -13,7 +13,7 @@ import Loading from "../../components/Loading/loading.jsx";
 
 function Home() {
   const { userData, isAuthenticated, getMeStatus } = useSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
   const [events, setEvents] = useState([]);
   const [amountOfPages, setAmountOfPages] = useState(1);
@@ -57,13 +57,12 @@ function Home() {
     try {
       response = await axiosInstance.get(url);
       const { count, next, previous, results } = response.data;
-      setAmountOfPages(Math.ceil(count / 50) || 1);
+      setAmountOfPages(Math.ceil(count / 48) || 1);
       setEvents(results);
       setNextPageURL(next);
       setPreviousPageURL(previous);
     } catch (error) {
-      console.log(response.data);
-      setError(error);
+      console.log(error.response.data);
       console.error(error);
     } finally {
       setLoading(false);
@@ -73,6 +72,7 @@ function Home() {
           window.scrollTo({ top: parseInt(resumeScroll), behavior: "smooth" });
         }, 200);
       }
+      setError(error);
     }
   };
 
@@ -101,7 +101,7 @@ function Home() {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          width: "100%"
+          width: "100%",
         }}
       >
         <Loading />
@@ -154,7 +154,16 @@ function Home() {
                 </button>
               </div>
             ) : (
-              <div>{error}</div>
+              error &&
+              Object.entries(error).map(([key, value], index) => {
+                return (
+                  <div key={index}>
+                    Error in field {key}
+                    <br />
+                    {value}
+                  </div>
+                );
+              })
             )}
           </>
         ) : (

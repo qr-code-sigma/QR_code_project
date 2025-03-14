@@ -9,31 +9,44 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from auth.serializers import UserSerizalizer
 from django.contrib.auth.password_validation import validate_password
+from django.db.models import Count
+from rest_framework.pagination import PageNumberPagination
+from api.serializers import EventSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-@csrf_exempt
-@require_GET
-def get_user_events_view(request, id):
+@api_view(['GET'])
+def get_user_events_view(request):
+    user = request.user
+    if not user.is_authenticated:
+        return Response({"error": "User not authenticated"}, status=401)
+    
     try:
-        user_id = int(id)
-    except ValueError:
-        return JsonResponse({"error": "Invalid id"}, status=400)
+        event_ids = UserEvent.objects.filter(user=user).values_list('event', flat=True)
+        events = Event.objects.filter(id__in=event_ids)
+        events = events.annotate(count=Count('userevent__user'))
+        events = events.order_by('id')
+        
+        paginator = PageNumberPagination()
+        paginator.page_size = 20
+        
+        paginated_events = paginator.paginate_queryset(events, request)
+        serializer = EventSerializer(paginated_events, many=True)
+        response = paginator.get_paginated_response(serializer.data)
+        
+        if response.data.get("next"):
+            response.data["next"] = response.data["next"].replace("http://", "https://")
+        if response.data.get("previous"):
+            response.data["previous"] = response.data["previous"].replace("http://", "https://")
+            
+        return response
+        
+    except Event.DoesNotExist:
+        return Response({"error": "Events not found"}, status=404)
+    except Exception as e:
+        print(f"Exception 500: {str(e)}")
+        return Response({"error": str(e)}, status=500)
 
-    try:
-        user = User.objects.get(pk=user_id)
-    except ObjectDoesNotExist:
-        return JsonResponse({"error": "User not found"}, status=404)
-
-    user_request = request.user
-
-    if user_request.username != user.username:
-        return JsonResponse({"error": "User not authorized"}, status=401)
-
-    event_ids = UserEvent.objects.filter(user=user_id).values_list('event', flat=True)
-    events = Event.objects.filter(id=event_ids)
-
-    return JsonResponse({"events": events}, status=200)
-
-@csrf_exempt
 @require_GET
 def get_user(request, id):
     try:
@@ -47,14 +60,12 @@ def get_user(request, id):
     }
     return JsonResponse(response, status = 200)
 
-@csrf_exempt
 @require_GET
 def get_users(request):
     users = User.objects.all()
     user_list = [{"username":user.username, "first_name":user.first_name, "last_name":user.last_name} for user in users]
     return JsonResponse({"users":user_list}, status = 200)
 
-@csrf_exempt
 @require_POST
 def event_registration_view(request, event_id):
     try:
@@ -72,7 +83,6 @@ def event_registration_view(request, event_id):
 
     return redirect(reverse("qr_code:get_qr_code", args=[event_id]))
 
-@csrf_exempt
 def edit_user_view(request):
     if request.method != 'PUT':
         return JsonResponse({"error": "Invalid method"}, status=405)

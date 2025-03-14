@@ -7,12 +7,17 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse, JsonResponse
 from rest_framework.pagination import PageNumberPagination
+from django.utils.timezone import now
+from datetime import timedelta
+
 
 def get_paginated_response(events, request):
     events = events.order_by('id')
     paginator = PageNumberPagination()
     paginator.page_size = 48
+    print("Crit")
     paginated_events = paginator.paginate_queryset(events, request)
+    print("crit2")
     serializer = EventSerializer(paginated_events, many=True)
     response = paginator.get_paginated_response(serializer.data)
     if response.data.get("next"):
@@ -34,6 +39,8 @@ def event_list(request):
 
     if request.method == "GET":
         events = Event.objects.all()
+        one_day_ago = now() - timedelta(days=1)
+        events = Event.objects.filter(date__gte=one_day_ago)
 
         if user.status == "guest":
             events = events.filter(status="Public")
@@ -42,6 +49,7 @@ def event_list(request):
         for key, value in request.GET.items():
             if key in [field.name for field in Event._meta.get_fields()]:
                 filters &= Q(**{key: value})
+        
         events = events.filter(filters)
         events = events.annotate(count=Count('userevent__user'))
         return get_paginated_response(events, request)

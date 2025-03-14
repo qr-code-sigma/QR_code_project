@@ -13,6 +13,9 @@ class Event(models.Model):
     class Meta:
         db_table = "events"
 
+    def __str__(self):
+        return f"Name:{self.name}, id:{self.id}"
+
 class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=50)

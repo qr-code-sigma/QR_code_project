@@ -9,20 +9,19 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from auth.serializers import UserSerizalizer
 from django.contrib.auth.password_validation import validate_password
+from api.views import get_paginated_response
+from django.db.models import Count
 
 @require_GET
 def get_user_events_view(request):
     user = request.user
     if not user.is_authenticated:
         return JsonResponse({"error": "User not authenticated"}, status=401)
-
     try:
         event_ids = UserEvent.objects.filter(user=user).values_list('event', flat=True)
         events = Event.objects.filter(id__in=event_ids)
-
-        event_data = list(events.values("id", "name", "date", "location"))  
-
-        return JsonResponse({"events": event_data}, status=200)
+        events = events.annotate(count=Count('userevent__user'))
+        return get_paginated_response(events, request)
     except Event.DoesNotExist:
         return JsonResponse({"error": "Events not found"}, status=404)
     except Exception as e:

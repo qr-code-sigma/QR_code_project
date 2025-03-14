@@ -9,7 +9,6 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from auth.serializers import UserSerizalizer
 from django.contrib.auth.password_validation import validate_password
-from api.views import get_paginated_response
 from django.db.models import Count
 from rest_framework.pagination import PageNumberPagination
 from api.serializers import EventSerializer
@@ -29,7 +28,7 @@ def get_user_events_view(request):
         events = events.order_by('id')
         
         paginator = PageNumberPagination()
-        paginator.page_size = 48
+        paginator.page_size = 20
         
         paginated_events = paginator.paginate_queryset(events, request)
         serializer = EventSerializer(paginated_events, many=True)

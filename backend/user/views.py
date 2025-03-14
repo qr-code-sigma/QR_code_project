@@ -28,7 +28,7 @@ def get_user_events_view(request):
         events = events.order_by('id')
         
         paginator = PageNumberPagination()
-        paginator.page_size = 20
+        paginator.page_size = 21
         
         paginated_events = paginator.paginate_queryset(events, request)
         serializer = EventSerializer(paginated_events, many=True)

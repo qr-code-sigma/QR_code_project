@@ -140,7 +140,7 @@ def edit_user_view(request):
     return JsonResponse({"error": serializer.errors}, status=400)
 
 @api_view(['GET'])
-def events_by_pattern(request, pattern):
+def user_events_by_pattern(request, pattern):
     events = Event.objects.filter(name__contains=pattern)
     events = events.annotate(count=Count('userevent__user'))
     paginator = PageNumberPagination()

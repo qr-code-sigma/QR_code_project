@@ -147,6 +147,7 @@ def user_events_by_pattern(request, pattern):
         
     event_ids = UserEvent.objects.filter(user=user).values_list('event', flat=True)
     events = Event.objects.filter(id__in=event_ids)
+    events = Event.objects.filter(name__contains=pattern)
     
     events = events.annotate(count=Count('userevent__user'))
     paginator = PageNumberPagination()

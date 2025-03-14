@@ -19,34 +19,53 @@ def get_user_events_view(request):
     user = request.user
     if not user.is_authenticated:
         return JsonResponse({"error": "User not authenticated"}, status=401)
+    
     try:
         event_ids = UserEvent.objects.filter(user=user).values_list('event', flat=True)
-        print(f"Events id: {event_ids}")
+        print(f"Found {len(event_ids)} event IDs for user")
+        
+        if not event_ids:
+            print("No event IDs found for user")
+            return JsonResponse({"results": [], "count": 0}, status=200)
+            
         events = Event.objects.filter(id__in=event_ids)
-        print(f"EVents: {events}")
+        event_count = events.count()
+        print(f"Found {event_count} events")
+
+        if event_count == 0:
+            print("No events found after filtering")
+            return JsonResponse({"results": [], "count": 0}, status=200)
+            
         events = events.annotate(count=Count('userevent__user'))
-        print(f"annontated events: {events}")
-        try:
-            print(f"event0: {events[0]}")
-        except Exception:
-            print("no")
         events = events.order_by('id')
         paginator = PageNumberPagination()
         paginator.page_size = 48
-        print("Crit")
-        paginated_events = paginator.paginate_queryset(events, request)
-        print("crit2")
-        serializer = EventSerializer(paginated_events, many=True)
-        response = paginator.get_paginated_response(serializer.data)
-        if response.data.get("next"):
-            response.data["next"] = response.data["next"].replace("http://", "https://")
-        if response.data.get("previous"):
-            response.data["previous"] = response.data["previous"].replace("http://", "https://")
-        return response
+        
+        try:
+            print("About to paginate...")
+            paginated_events = paginator.paginate_queryset(events, request)
+            print(f"Pagination successful, got {len(paginated_events)} events")
+            
+            serializer = EventSerializer(paginated_events, many=True)
+            response = paginator.get_paginated_response(serializer.data)
+            if response.data.get("next"):
+                response.data["next"] = response.data["next"].replace("http://", "https://")
+            if response.data.get("previous"):
+                response.data["previous"] = response.data["previous"].replace("http://", "https://")
+                
+            return response
+            
+        except Exception as pagination_error:
+            print(f"Pagination error: {str(pagination_error)}")
+            print(f"Pagination error type: {type(pagination_error)}")
+            return JsonResponse({"error": f"Pagination error: {str(pagination_error)}"}, status=500)
+            
     except Event.DoesNotExist:
         return JsonResponse({"error": "Events not found"}, status=404)
+        
     except Exception as e:
-        print("Exception 500")
+        print(f"Exception 500: {str(e)}")
+        print(f"Exception type: {type(e)}")
         return JsonResponse({"error": str(e)}, status=500)
 
 

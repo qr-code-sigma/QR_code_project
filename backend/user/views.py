@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from auth.serializers import UserSerizalizer
 from django.contrib.auth.password_validation import validate_password
-from django.db.models import Count
+from django.db.models import Q, Count
 from rest_framework.pagination import PageNumberPagination
 from api.serializers import EventSerializer
 from rest_framework.decorators import api_view
@@ -146,10 +146,11 @@ def user_events_by_pattern(request, pattern):
         return Response({"error": "User not authenticated"}, status=401)
         
     event_ids = UserEvent.objects.filter(user=user).values_list('event', flat=True)
-    events = Event.objects.filter(id__in=event_ids)
-    events = Event.objects.filter(name__contains=pattern)
     
-    events = events.annotate(count=Count('userevent__user'))
+    events = Event.objects.filter(
+        Q(id__in=event_ids) | Q(name__contains=pattern) 
+    ).annotate(count=Count('userevent__user'))
+    
     paginator = PageNumberPagination()
     paginator.page_size = 21
     paginated_events = paginator.paginate_queryset(events, request)

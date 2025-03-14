@@ -57,7 +57,7 @@ function Home() {
     try {
       response = await axiosInstance.get(url);
       const { count, next, previous, results } = response.data;
-      setAmountOfPages(Math.ceil(count / 50) || 1);
+      setAmountOfPages(Math.ceil(count / 48) || 1);
       setEvents(results);
       setNextPageURL(next);
       setPreviousPageURL(previous);

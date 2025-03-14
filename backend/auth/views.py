@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST, require_GET
 from django.middleware.csrf import get_token
 from api.models import User, UserEvent
 from django.core.mail import EmailMessage
-from .serializers import UserSerizalizer
+from .serializers import UserSerializer
 import threading
 import random
 from datetime import datetime, timezone
@@ -94,7 +94,7 @@ def register(request):
         except json.JSONDecodeError:
             print("Bad json could not decode")
             return JsonResponse({"details":"Server error"}, status = 500)
-        serizalizer = UserSerizalizer(data=data)
+        serizalizer = UserSerializer(data=data)
         try:
             if serizalizer.is_valid():
                 user = serizalizer.save()

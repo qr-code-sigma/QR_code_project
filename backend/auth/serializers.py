@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from api.models import User
 
-class UserSerizalizer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(max_length = 30, required = True)
     last_name = serializers.CharField(max_length = 30, required = True)
     email = serializers.EmailField(max_length = 254, required = True)

@@ -19,12 +19,16 @@ def get_user_events_view(request):
         return JsonResponse({"error": "User not authenticated"}, status=401)
     try:
         event_ids = UserEvent.objects.filter(user=user).values_list('event', flat=True)
+        print(f"Events id: {event_ids}")
         events = Event.objects.filter(id__in=event_ids)
+        print(f"EVents: {events}")
         events = events.annotate(count=Count('userevent__user'))
+        print(f"annontated events: {events}")
         return get_paginated_response(events, request)
     except Event.DoesNotExist:
         return JsonResponse({"error": "Events not found"}, status=404)
     except Exception as e:
+        print("Exception 500")
         return JsonResponse({"error": str(e)}, status=500)
 
 

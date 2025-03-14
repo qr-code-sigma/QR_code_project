@@ -138,3 +138,20 @@ def edit_user_view(request):
     print("Serializer is not valid")
     print(serializer.errors)
     return JsonResponse({"error": serializer.errors}, status=400)
+
+@api_view(['GET'])
+def events_by_pattern(request, pattern):
+    events = Event.objects.filter(name__contains=pattern)
+    events = events.annotate(count=Count('userevent__user'))
+    paginator = PageNumberPagination()
+    paginator.page_size = 21
+    paginated_events = paginator.paginate_queryset(events, request)
+    serializer = EventSerializer(paginated_events, many=True)
+    response = paginator.get_paginated_response(serializer.data)
+    
+    if response.data.get("next"):
+        response.data["next"] = response.data["next"].replace("http://", "https://")
+    if response.data.get("previous"):
+        response.data["previous"] = response.data["previous"].replace("http://", "https://")
+        
+    return response

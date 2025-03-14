@@ -1,22 +1,18 @@
 import React from "react";
 import "./header.css";
 import { useNavigate } from "react-router-dom";
+import flushSearchInput from "../../utils/flushSearchInput.js";
 
 function Header({ handleSearch, searchInput, setSearchInput }) {
   const navigate = useNavigate();
 
   const navigateInTime = () => {
+    localStorage.setItem("SEARCH_INPUT", "");
     navigate("/profile");
   };
 
   const searchOnChange = (e) => {
     setSearchInput(e.target.value);
-  };
-
-  const flushSearchInput = () => {
-    localStorage.removeItem("SEARCH_INPUT");
-    localStorage.removeItem("CURRENT_PAGE");
-    location.reload();
   };
 
   return (
@@ -34,7 +30,7 @@ function Header({ handleSearch, searchInput, setSearchInput }) {
             className="search-bar"
             required
           />
-          <button type="submit" className="bnt-search" title="Search">
+          <button type="x" className="bnt-search" title="Search">
             <i className="fas fa-search"></i>
           </button>
           <button

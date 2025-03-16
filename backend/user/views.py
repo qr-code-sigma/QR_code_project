@@ -69,17 +69,27 @@ def get_users(request):
 @require_POST
 def event_registration_view(request, event_id):
     try:
-        event = Event.objects.get(id=event_id)
-    except ObjectDoesNotExist:
-        return JsonResponse({ "error" : "Event does not exist" }, status = 404)
+        event = Event.objects.annotate(count=Count('userevent__user')).get(pk=event_id)
+        
+        if event.count >= event.places:
+            return JsonResponse({"error": "Event is fully booked"}, status=400)
+    
+    except Event.DoesNotExist:
+        return JsonResponse({"error": "Event does not exist"}, status=404)
+    
+    except Exception as e:
+        return JsonResponse({"error": f"Could not fetch event: {str(e)}"}, status=500)
 
     user = request.user
 
     if UserEvent.objects.filter(event=event, user=user).exists():
-        return JsonResponse({ "error" : "You are already registered for this event." }, status = 400)
+        return JsonResponse({"error": "You are already registered for this event."}, status=400)
 
-    user_event = UserEvent.objects.create(event=event, user=user)
-    user_event.save()
+    try:
+        user_event = UserEvent.objects.create(event=event, user=user)
+        user_event.save()
+    except Exception as e:
+        return JsonResponse({"error": f"Registration failed: {str(e)}"}, status=500)
 
     return redirect(reverse("qr_code:get_qr_code", args=[event_id]))
 

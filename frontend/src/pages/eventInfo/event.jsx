@@ -1,14 +1,16 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import axiosInstance from "../../config/axiosConfig.js";
 import "./event.css";
 import {useLocation, useNavigate} from "react-router-dom";
 import Canvas from "../../components/Canvas/canvas.jsx";
 import Loading from "../../components/Loading/loading.jsx";
 import {useSelector} from "react-redux";
+import CanvasToPDF from "../../components/DownloadPDF/DownloadPDF.jsx";
 
 function Event() {
     const location = useLocation();
     const navigate = useNavigate();
+    const canvasRef = useRef(null);
 
     //Using when loading page
     const [loadingPage, setLoadingPage] = React.useState(true);
@@ -176,9 +178,9 @@ function Event() {
                         <h2>You’ve been registered!</h2>
                         <p>Here is your QR code</p>
                         <div className="qr-code-placeholder">
-                            <Canvas matrix={code}/>
+                            <Canvas matrix={code} ref={canvasRef} />
                         </div>
-                        <button className="btn-download">Download PDF</button>
+                        <CanvasToPDF canvasRef={canvasRef} />
                     </div>
                 ) : (
                     <div className="register-buttons-container">

@@ -1,6 +1,5 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import axiosInstance from '../../config/axiosConfig.js'
-import {updateUserData} from "./auth.js";
 
 export const createUser = createAsyncThunk(
     'user/create',
@@ -43,6 +42,7 @@ export const updateUser = createAsyncThunk(
                 old_password: user.oldPassword,
                 new_password: user.newPassword
             });
+
         } catch (e) {
             console.log(e.response.data.error)
             return rejectWithValue(e.response.data.error)
@@ -79,6 +79,12 @@ const initialState = {
 export const userSlice = createSlice({
     name: 'userSlice',
     initialState,
+    reducers: {
+      clearState: (state) => {
+          state.status = null;
+          state.error = null;
+      }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(createUser.pending, (state) => {
@@ -113,6 +119,6 @@ export const userSlice = createSlice({
     },
 })
 
-export const {test} = userSlice.actions
+export const {clearState} = userSlice.actions
 
 export default userSlice.reducer

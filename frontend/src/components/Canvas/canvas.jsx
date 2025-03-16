@@ -1,9 +1,10 @@
-import React, {useEffect, useRef} from 'react';
+// Canvas.jsx - Fix the ref handling
+import React, { useEffect, forwardRef } from 'react';
 
-function Canvas({ matrix }) {
-    const ref = useRef(null);
-
+const Canvas = forwardRef(({ matrix }, ref) => {
     useEffect(() => {
+        if (!ref.current) return;
+
         const ctx = ref.current.getContext('2d');
         const size = 5;
 
@@ -13,25 +14,21 @@ function Canvas({ matrix }) {
         ref.current.width = width;
         ref.current.height = height;
 
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-        for(let i = 0; i < matrix[0].length; i++) {
+        for(let i = 0; i < matrix.length; i++) {
             for (let j = 0; j < matrix[0].length; j++) {
                 if(matrix[i][j]) {
                     ctx.fillStyle = "rgb(0 0 0)";
                 } else {
                     ctx.fillStyle = "rgb(255 255 255)";
                 }
-                ctx.fillRect(i*size, j*size, size, size);
+                ctx.fillRect(j*size, i*size, size, size);
             }
         }
-    }, [matrix]);
+    }, [matrix, ref]);
 
-    return (
-        <canvas ref={ref}>
-
-        </canvas>
-    );
-}
+    return <canvas ref={ref} />;
+});
 
 export default Canvas;

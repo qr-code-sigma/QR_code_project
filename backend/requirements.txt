@@ -11,4 +11,5 @@ python-dotenv
 django-redis
 django-csp
 qrcode
+whitenoise
 gunicorn==23.0.0

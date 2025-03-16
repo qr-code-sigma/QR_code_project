@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 import configparser
 import os
+import whitenoise
 from dotenv import load_dotenv, dotenv_values
 
 load_dotenv()
@@ -106,6 +107,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'csp.middleware.CSPMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -180,7 +182,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'staticfiles'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -214,6 +216,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5002",
     "http://localhost:5003",
     "https://qr-code-project-sigma.netlify.app",
+    "https://qr-code-project.up.railway.app",
 ]
 
 CSRF_COOKIE_DOMAIN = '.qr-code-project.up.railway.app'
@@ -230,3 +233,5 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

@@ -132,18 +132,21 @@ function ProfilePage() {
         <main className="profile-main-content">
           <section className="profile-info">
             <div className="status">
-              Status:
+              <b>Status:</b>
               <div className={`user-status ${getStatusClass(userData.status)}`}>
                 {userData.status}
               </div>
             </div>
+            <div className="username">
+              <b>Username:</b> <span>{userData.username}</span>
+            </div>
             <div className="email">
-              Email: <span>{userData.email}</span>
+              <b>Email:</b> <span>{userData.email}</span>
             </div>
           </section>
           <section className="to-settings">
             <button
-              onClick={() => navigate("/editProfile")}
+                onClick={() => navigate("/editProfile")}
               className="btn-settings"
             >
               <span>Settings</span>

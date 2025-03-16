@@ -102,3 +102,47 @@
     gap: 10px;
     width: 100%;
 }
+
+@media (max-width: 480px) {
+    .add-event-main-content {
+        width: 100%;
+        padding: 0 16px;
+    }
+
+    .add-event-page-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .add-event-page-location {
+        grid-column: 1 / -1;
+        text-align: start;
+    }
+
+    .add-event-page-date {
+        grid-column: 1 / 2;
+        grid-row: 2;
+    }
+
+    .add-event-page-status {
+        grid-column: 2 / 3;
+        grid-row: 2;
+    }
+}
+
+@media (max-width: 480px) {
+    .add-event-page-info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .add-event-location-input,
+    .add-event-date-input,
+    .add-event-status-select {
+        width: 100%;
+    }
+}

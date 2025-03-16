@@ -182,7 +182,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'staticfiles'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -216,7 +216,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5002",
     "http://localhost:5003",
     "https://qr-code-project-sigma.netlify.app",
-    "https://qr-code-project.up.railway.app/",
+    "https://qr-code-project.up.railway.app",
 ]
 
 CSRF_COOKIE_DOMAIN = '.qr-code-project.up.railway.app'

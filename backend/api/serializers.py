@@ -10,6 +10,6 @@ class EventSerializer(serializers.ModelSerializer):
     def validate(self, attr):
         places = attr.get("places")
         if places is not None:
-            if places < 0:
-                raise serializers.ValidationError("Number of places ca not be negative")
+            if places < 10:
+                raise serializers.ValidationError("Number of places can not be less than 10")
         return attr

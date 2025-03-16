@@ -17,3 +17,19 @@
     width: 100%;
     gap: 14px;
 }
+
+@media (max-width: 480px) {
+    .header-container {
+        flex-direction: column;
+        padding: 16px;
+        gap: 10px;
+    }
+
+    .btn-profile {
+        width: 100%;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+}

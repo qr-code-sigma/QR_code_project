@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
-import "./editEvent.css";
-import {useLocation, useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import "../addEvent/addEvent.css";
+import { useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../../config/axiosConfig.js";
 import Loading from "../../components/Loading/loading.jsx";
 
@@ -16,7 +16,7 @@ function EditEvent() {
     description: "",
     date: "",
     location: "",
-    status: "Public",
+    status: "Public"
   });
 
   const handleEditFormSubmit = async (e) => {
@@ -24,24 +24,24 @@ function EditEvent() {
     setLoading(true);
     newEventInfo.date = newEventInfo.date.slice(
       0,
-      newEventInfo.date.indexOf("T"),
+      newEventInfo.date.indexOf("T")
     );
 
     try {
-      const newData = {}
+      const newData = {};
       Object.entries(newEventInfo).forEach(([key, value]) => {
-        if(value) {
+        if (value) {
           newData[key] = value;
         }
-      })
-      const id = location.state.id
+      });
+      const id = location.state.id;
       await axiosInstance.patch(`events/${id}`, newData);
 
-      navigate('/');
+      navigate("/");
     } catch (error) {
       console.log(
         "catch from patch response after editing event:",
-        error.response,
+        error.response
       );
       setError(error.response.data);
     } finally {
@@ -52,24 +52,24 @@ function EditEvent() {
   const onChangeAddForm = (e) => {
     setNewEventInfo((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     }));
   };
 
   if (loading) {
     return (
-        <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100vh",
-              width: "100%"
-            }}
-        >
-          <Loading />
-        </div>
-    )
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100%"
+        }}
+      >
+        <Loading />
+      </div>
+    );
   }
 
   return (
@@ -77,7 +77,10 @@ function EditEvent() {
       <header className="add-event-header">
         <h1>Edit Event</h1>
       </header>
-      <form onSubmit={handleEditFormSubmit} className="add-event-main-container">
+      <form
+        onSubmit={handleEditFormSubmit}
+        className="add-event-main-container"
+      >
         <input
           value={newEventInfo.name}
           onChange={onChangeAddForm}
@@ -132,7 +135,11 @@ function EditEvent() {
           </div>
         </section>
         <div className="add-event-buttons">
-          <button type='button' className="btn-default" onClick={() => navigate(-1)}>
+          <button
+            type="button"
+            className="btn-default"
+            onClick={() => navigate(-1)}
+          >
             <span>Cancel</span>
           </button>
           <button type="submit" className="btn-primary">

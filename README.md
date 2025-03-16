@@ -18,7 +18,7 @@ The project is built using the following technologies:
 - **Frontend**: React, Axios, Redux  
 - **Database**: PostgreSQL  
 - **Authentication**: Session-based  
-- **Others**: Redis (used for caching and background task management)  
+- **Others**: Redis (used for caching)  
 
 The backend is deployed on **Railway**, and the frontend is deployed on **Netlify**.  
 Project management and task tracking were organized using **Jira**. 
@@ -35,5 +35,5 @@ This project was developed by a team of 8 students as part of a university colla
 - **Nikita Shulha** – Frontend  
 - **Davyd Braskiv** - Frontend  
 - **Danil Kuzma** – Frontend, UI/UX  
-- **Sofia Churikova** – Deplotment, UI/UX  
+- **Sofia Churikova** – Deployment, UI/UX  
 - **Ksenia Hanziuk** – QA    

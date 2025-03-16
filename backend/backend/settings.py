@@ -214,7 +214,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5002",
     "http://localhost:5003",
     "https://qr-code-project-sigma.netlify.app",
-    "https://qr-code-project.up.railway.app/",
+    "https://qr-code-project.up.railway.app",
 ]
 
 CSRF_COOKIE_DOMAIN = '.qr-code-project.up.railway.app'

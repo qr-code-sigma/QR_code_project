@@ -237,3 +237,7 @@
         margin-left: 0px;
     }
 }
+
+.scaled-loader .loader {
+    transform: scale(0.15);
+}

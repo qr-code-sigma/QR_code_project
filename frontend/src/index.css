@@ -108,10 +108,10 @@ button:disabled {
     background: var(--btn-download);
 }
 
-.btn-default span, .btn-primary span, .btn-danger span, .btn-danger-low span, .btn-settings span, .btn-lg span {
+.btn-default span, .btn-primary span, .btn-danger span, .btn-danger-low span, .btn-settings span, .btn-lg span, .btn-download span {
     width: 68px;
     text-align: center;
-    color: #212121;
+    color: var(--text-color);
     font-size: 14px;
     font-weight: 600;
     word-wrap: break-word;
@@ -164,4 +164,9 @@ button:disabled {
 
 .bnt-search i {
     font-size: 16px;
+    color: var(--text-color);
+}
+
+.bnt-clear-filter-term i {
+    color: var(--text-color);
 }

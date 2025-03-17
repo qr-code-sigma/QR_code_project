@@ -151,6 +151,7 @@ button:disabled {
 
 .btn-clear-filter-term {
     background: var(--btn-danger-low);
+    color: var(--text-color);
 }
 
 .bnt-search:hover, .btn-clear-filter-term:hover {
@@ -164,9 +165,5 @@ button:disabled {
 
 .bnt-search i {
     font-size: 16px;
-    color: var(--text-color);
-}
-
-.bnt-clear-filter-term i {
     color: var(--text-color);
 }

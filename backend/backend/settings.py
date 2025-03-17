@@ -137,14 +137,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 AUTH_USER_MODEL = 'api.User'
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:HHMAEDnZdrdsdChsluXwbWfuhEeYZtHM@turntable.proxy.rlwy.net:19520/railway")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 url = urlparse(DATABASE_URL)
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': url.path[1:],  # Виключаємо перший слеш
+        'NAME': url.path[1:],  
         'USER': url.username,
         'PASSWORD': url.password,
         'HOST': url.hostname,

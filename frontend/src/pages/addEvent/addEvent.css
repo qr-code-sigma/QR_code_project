@@ -34,7 +34,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 50%;
     gap: 10px;
 }
 
@@ -79,6 +78,7 @@
 .add-event-status-select {
     text-align: center;
     background-color: var(--yellow);
+    color: var(--text-color);
 }
 
 .add-event-date-input {

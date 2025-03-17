@@ -149,6 +149,7 @@ function EditEvent() {
       </form>
       {error &&
         Object.entries(error).map(([key, value], index) => {
+
           return (
             <div key={index}>
               Error in field {key}

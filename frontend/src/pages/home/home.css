@@ -18,6 +18,10 @@
     cursor: pointer;
 }
 
+.add-event-button i {
+    color: var(--text-color);
+}
+
 .add-event-button:hover {
     transform: translate(4px, 4px);
     box-shadow: 0 0 0 black;

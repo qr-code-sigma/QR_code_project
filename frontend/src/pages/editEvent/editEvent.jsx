@@ -36,7 +36,7 @@ function EditEvent() {
       });
       const id = location.state.id;
       await axiosInstance.patch(`events/${id}`, newData);
-
+      localStorage.clear();
       navigate("/");
     } catch (error) {
       console.log(

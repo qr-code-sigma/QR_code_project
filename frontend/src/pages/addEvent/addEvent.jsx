@@ -28,7 +28,7 @@ function AddEvent() {
 
     try {
       await axiosInstance.post("events/", newEventInfo);
-
+      localStorage.clear();
       navigate(-1);
     } catch (error) {
       console.log(

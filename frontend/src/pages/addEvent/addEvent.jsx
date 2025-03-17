@@ -3,6 +3,7 @@ import "./addEvent.css";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../config/axiosConfig.js";
 import Loading from "../../components/Loading/loading.jsx";
+import Alert from "../../components/Alert/alert.jsx";
 
 function AddEvent() {
   const navigate = useNavigate();
@@ -47,22 +48,6 @@ function AddEvent() {
       [e.target.name]: e.target.value
     }));
   };
-
-  if (loading) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          width: "100%"
-        }}
-      >
-        <Loading />
-      </div>
-    );
-  }
 
   return (
     <div className="add-event-page-container">
@@ -133,21 +118,24 @@ function AddEvent() {
           <button className="btn-default" onClick={() => navigate(-1)}>
             <span>Cancel</span>
           </button>
-          <button type="submit" className="btn-primary">
-            <span>Add</span>
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? (
+              <Loading customClass="scaled-loader" />
+            ) : (
+              <span>Add</span>
+            )}
           </button>
         </div>
       </form>
       {error &&
-        Object.entries(error).map(([key, value], index) => {
-          return (
-            <div key={index}>
-              Error in field {key}
-              <br />
-              {value}
-            </div>
-          );
-        })}
+        Object.entries(error).map(([key, value], index) => (
+          <Alert
+            key={index}
+            title={`Error in field ${key}`}
+            message={value}
+            iconClass="fas fa-exclamation-circle"
+          />
+        ))}
     </div>
   );
 }

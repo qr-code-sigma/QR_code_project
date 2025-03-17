@@ -7,7 +7,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.urls import reverse
-from auth.serializers import UserSerizalizer
+from auth.serializers import UserSerializer
 from django.contrib.auth.password_validation import validate_password
 from django.db.models import Q, Count
 from rest_framework.pagination import PageNumberPagination
@@ -119,7 +119,7 @@ def edit_user_view(request):
     }
 
 
-    serializer = UserSerizalizer(instance=user, data=new_data, partial=True)
+    serializer = UserSerializer(instance=user, data=new_data, partial=True)
 
     if serializer.is_valid():
         print("Serializer is valid")

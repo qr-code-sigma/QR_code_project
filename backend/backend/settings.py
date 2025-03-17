@@ -16,6 +16,8 @@ import configparser
 import os
 import whitenoise
 from dotenv import load_dotenv, dotenv_values
+from urllib.parse import urlparse
+
 
 load_dotenv()
 
@@ -135,14 +137,18 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 AUTH_USER_MODEL = 'api.User'
 
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:HHMAEDnZdrdsdChsluXwbWfuhEeYZtHM@turntable.proxy.rlwy.net:19520/railway")
+
+url = urlparse(DATABASE_URL)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config.get('Database', 'db_name'),
-        'USER': config.get('Database', 'db_user'),
-        'PASSWORD': os.getenv("DATABASE_PASSWORD"),
-        'HOST': config.get('Database', 'db_host'),
-        'PORT': config.get('Database', 'db_port'),
+        'NAME': url.path[1:],  # Виключаємо перший слеш
+        'USER': url.username,
+        'PASSWORD': url.password,
+        'HOST': url.hostname,
+        'PORT': url.port,
     }
 }
 
@@ -184,8 +190,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'staticfiles'),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

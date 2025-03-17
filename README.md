@@ -30,10 +30,10 @@ This project was developed by a team of 8 students as part of a university colla
 
 ### Contributors:
 - **Pavlo Khoroshun** - PM, backend
-- **Vitaliy Pokhodun** – Backend  
+- **Vitalii Pokhodun** – Backend  
 - **Margaryta Filipovych** – Backend, Database  
 - **Nikita Shulha** – Frontend  
-- **Davyd Braskiv** - Frontend  
+- **Davyd Breskiv** - Frontend  
 - **Danil Kuzma** – Frontend, UI/UX  
 - **Sofia Churikova** – Deployment, UI/UX  
 - **Ksenia Hanziuk** – QA    

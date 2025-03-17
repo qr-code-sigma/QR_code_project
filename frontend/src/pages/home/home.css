@@ -62,3 +62,15 @@
 .pagination-button:hover {
     background: var(--btn-secondary-hover);
 }
+
+@media (max-width: 480px) {
+    .events-container {
+        padding: 16px;
+        width: 100%;
+    }
+
+    .add-event-button {
+        width: 266px;
+        margin-top: 21px;
+    }
+}

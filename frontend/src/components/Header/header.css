@@ -22,13 +22,10 @@
     .header-container {
         flex-direction: column;
         padding: 16px;
+        gap: 10px;
     }
 
     .btn-profile {
-        width: auto;
-    }
-
-    .search-form {
         width: 100%;
     }
 

@@ -13,13 +13,12 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 21px;
 }
 
 .profile-info {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 8px;
     padding: 15px;
     border-radius: 5px;
@@ -27,7 +26,11 @@
     width: fit-content;
 }
 
-.status, .email {
+.profile-info > :first-child {
+    margin: auto;
+}
+
+.status, .email, .username {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -74,6 +77,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 10px;
     padding-top: 20px;
     width: auto;
 }
@@ -89,4 +93,9 @@
     margin-top: 42px;
     margin-bottom: 42px;
     width: 480px;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
 }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./addEvent.css";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../config/axiosConfig.js";
+import Loading from "../../components/Loading/loading.jsx";
 
 function AddEvent() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ function AddEvent() {
     description: "",
     date: "",
     location: "",
-    status: "Public",
+    status: "Public"
   });
 
   const handleAddFormSubmit = async (e) => {
@@ -22,7 +23,7 @@ function AddEvent() {
     setLoading(true);
     newEventInfo.date = newEventInfo.date.slice(
       0,
-      newEventInfo.date.indexOf("T"),
+      newEventInfo.date.indexOf("T")
     );
 
     try {
@@ -32,7 +33,7 @@ function AddEvent() {
     } catch (error) {
       console.log(
         "(catch from add)response after adding new event:",
-        error.response,
+        error.response
       );
       setError(error.response.data);
     } finally {
@@ -43,12 +44,24 @@ function AddEvent() {
   const onChangeAddForm = (e) => {
     setNewEventInfo((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     }));
   };
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100%"
+        }}
+      >
+        <Loading />
+      </div>
+    );
   }
 
   return (

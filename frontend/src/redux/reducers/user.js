@@ -30,6 +30,30 @@ export const createUser = createAsyncThunk(
     }
 )
 
+export const updateUser = createAsyncThunk(
+    'user/update',
+    async function ({user, navigate}, {rejectWithValue,dispatch}) {
+        let response;
+        try {
+            response = await axiosInstance.put('/users/edit', {
+                new_first_name: user.first_name,
+                new_last_name: user.last_name,
+                new_username: user.username,
+                old_password: user.oldPassword,
+                new_password: user.newPassword
+            });
+
+        } catch (e) {
+            console.log(e.response.data.error)
+            return rejectWithValue(e.response.data.error)
+        }
+
+        navigate('/profile')
+        window.location.reload();
+        return response?.data;
+    }
+)
+
 export const confirmEmail = createAsyncThunk(
     'user/confirmEmail',
     async function ({code, email, navigate}, {rejectWithValue}) {
@@ -56,9 +80,10 @@ export const userSlice = createSlice({
     name: 'userSlice',
     initialState,
     reducers: {
-        test: (state, action) => {
-
-        }
+      clearState: (state) => {
+          state.status = null;
+          state.error = null;
+      }
     },
     extraReducers: (builder) => {
         builder
@@ -80,9 +105,20 @@ export const userSlice = createSlice({
                 state.status = 'rejected';
                 state.error = 'Code you wrote does not match to the code sent to your email'
             })
+            .addCase(updateUser.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(updateUser.rejected, (state, action) => {
+                state.status = 'rejected';
+                state.error = action.payload;
+            })
+            .addCase(updateUser.fulfilled, (state, action) => {
+                state.status = null;
+            })
     },
 })
 
-export const {test} = userSlice.actions
+export const {clearState} = userSlice.actions
 
 export default userSlice.reducer

@@ -1,14 +1,13 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import { createUser } from '../../redux/reducers/user.js'
+import { createUser, clearState } from '../../redux/reducers/user.js'
 import useDisabledButton from "../../hooks/useDisabledButton.js";
 
 function Registration() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { status, error } = useSelector(state => state.user)
-
     const [formData, setFormData] = React.useState({
         userName: '',
         firstName: '',
@@ -32,6 +31,12 @@ function Registration() {
             [e.target.name]: e.target.value,
         }));
     };
+
+    useEffect(() => {
+        return () => {
+            dispatch(clearState());
+        }
+    }, [])
 
     return (
         <div className="settings-dialog">
@@ -112,12 +117,18 @@ function Registration() {
             </section>
             {status === 'loading' && 'loading'}
             {status === 'rejected' &&
-            Object.values(error).map((error, index) => (
-                <div key={index}>
-                    {error}
-                </div>
-            ))
+                error && (
+                    typeof error === 'string' ? error :
+                        error && typeof error === 'object' ? (
+                            Object.values(error).map((errorMessage, index) => (
+                                <div key={index}>
+                                    {errorMessage}
+                                </div>
+                            ))
+                        ) : null
+                )
             }
+
         </div>
     );
 }

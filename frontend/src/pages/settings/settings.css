@@ -71,3 +71,10 @@
     justify-content: flex-end;
     gap: 10px;
 }
+
+@media (max-width: 480px) {
+    .settings-dialog {
+        width: calc(100% - 32px);
+        margin: 0 auto;
+    }
+}

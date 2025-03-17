@@ -29,3 +29,14 @@ body {
     flex-direction: row;
     gap: 26px;
 }
+
+@media (max-width: 480px) {
+    .main-welcome-page h1 {
+        font-size: 36px;
+    }
+
+    .main-welcome-page p {
+        font-size: 18px;
+        padding: 0 16px;
+    }
+}

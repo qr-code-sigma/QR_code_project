@@ -23,3 +23,15 @@
     color: var(--text-color);
     margin: 0;
 }
+
+@media (max-width: 480px) {
+    .profile-header-container {
+        padding: 0 16px;
+        gap: 10px;
+    }
+
+    .profile-header-text {
+        font-size: 18px;
+        text-align: center;
+    }
+}

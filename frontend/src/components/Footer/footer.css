@@ -6,6 +6,7 @@
     width: 100%;
     background-color: var(--background-color);
     padding: 24px 150px;
+    text-align: center;
 }
 
 .footer p {
@@ -20,4 +21,10 @@
 
 .footer a:visited {
     color: var(--text-color);
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: 16px;
+    }
 }

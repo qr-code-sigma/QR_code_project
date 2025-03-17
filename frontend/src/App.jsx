@@ -7,6 +7,7 @@ import ConfirmEmail from "./pages/confirmEmail/confirmEmail.jsx";
 import {useDispatch} from "react-redux";
 import { getMe } from "./redux/reducers/auth.js";
 import Authorization from "./pages/authorization/authorization.jsx";
+import EditEvent from "./pages/editEvent/editEvent.jsx";
 
 function App() {
     const dispatch = useDispatch();
@@ -29,6 +30,8 @@ function App() {
                         element={<Profile status="Employee"/>}
                     />
 
+                    <Route path="/editProfile" element={<Settings/>}/>
+                    <Route path="/editEvent" element={<EditEvent />}/>
                     <Route path="/event" element={<EventInfo status="Private"/>}/>
                     <Route path="/addEvent" element={<AddEvent/>}/>
                     <Route path="/settings" element={<Settings/>}/>

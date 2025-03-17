@@ -6,34 +6,47 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
-from qr_code.views import get_qr
 from django.urls import reverse
+from auth.serializers import UserSerizalizer
+from django.contrib.auth.password_validation import validate_password
+from django.db.models import Q, Count
+from rest_framework.pagination import PageNumberPagination
+from api.serializers import EventSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-
-@csrf_exempt
-@require_GET
-def get_user_events_view(request, id):
+@api_view(['GET'])
+def get_user_events_view(request):
+    user = request.user
+    if not user.is_authenticated:
+        return Response({"error": "User not authenticated"}, status=401)
+    
     try:
-        user_id = int(id)
-    except ValueError:
-        return JsonResponse({"error": "Invalid id"}, status=400)
+        event_ids = UserEvent.objects.filter(user=user).values_list('event', flat=True)
+        events = Event.objects.filter(id__in=event_ids)
+        events = events.annotate(count=Count('userevent__user'))
+        events = events.order_by('id')
+        
+        paginator = PageNumberPagination()
+        paginator.page_size = 21
+        
+        paginated_events = paginator.paginate_queryset(events, request)
+        serializer = EventSerializer(paginated_events, many=True)
+        response = paginator.get_paginated_response(serializer.data)
+        
+        if response.data.get("next"):
+            response.data["next"] = response.data["next"].replace("http://", "https://")
+        if response.data.get("previous"):
+            response.data["previous"] = response.data["previous"].replace("http://", "https://")
+            
+        return response
+        
+    except Event.DoesNotExist:
+        return Response({"error": "Events not found"}, status=404)
+    except Exception as e:
+        print(f"Exception 500: {str(e)}")
+        return Response({"error": str(e)}, status=500)
 
-    try:
-        user = User.objects.get(pk=user_id)
-    except ObjectDoesNotExist:
-        return JsonResponse({"error": "User not found"}, status=404)
-
-    user_request = request.user
-
-    if user_request.username != user.username:
-        return JsonResponse({"error": "User not authorized"}, status=401)
-
-    event_ids = UserEvent.objects.filter(user=user_id).values_list('event', flat=True)
-    events = Event.objects.filter(id=event_ids)
-
-    return JsonResponse({"events": events}, status=200)
-
-@csrf_exempt
 @require_GET
 def get_user(request, id):
     try:
@@ -47,74 +60,116 @@ def get_user(request, id):
     }
     return JsonResponse(response, status = 200)
 
-@csrf_exempt
 @require_GET
 def get_users(request):
     users = User.objects.all()
     user_list = [{"username":user.username, "first_name":user.first_name, "last_name":user.last_name} for user in users]
     return JsonResponse({"users":user_list}, status = 200)
 
-@csrf_exempt
 @require_POST
 def event_registration_view(request, event_id):
     try:
-        event = Event.objects.get(id=event_id)
-    except ObjectDoesNotExist:
-        return JsonResponse({ "error" : "Event does not exist" }, status = 404)
+        event = Event.objects.annotate(count=Count('userevent__user')).get(pk=event_id)
+        
+        if event.count >= event.places:
+            return JsonResponse({"error": "Event is fully booked"}, status=400)
+    
+    except Event.DoesNotExist:
+        return JsonResponse({"error": "Event does not exist"}, status=404)
+    
+    except Exception as e:
+        return JsonResponse({"error": f"Could not fetch event: {str(e)}"}, status=500)
 
     user = request.user
 
     if UserEvent.objects.filter(event=event, user=user).exists():
-        return JsonResponse({ "error" : "You are already registered for this event." }, status = 400)
+        return JsonResponse({"error": "You are already registered for this event."}, status=400)
 
-    user_event = UserEvent.objects.create(event=event, user=user)
-    user_event.save()
+    try:
+        user_event = UserEvent.objects.create(event=event, user=user)
+        user_event.save()
+    except Exception as e:
+        return JsonResponse({"error": f"Registration failed: {str(e)}"}, status=500)
 
     return redirect(reverse("qr_code:get_qr_code", args=[event_id]))
 
-@csrf_exempt
-@require_POST
-def edit_user_view(request, id):
+def edit_user_view(request):
+    if request.method != 'PUT':
+        return JsonResponse({"error": "Invalid method"}, status=405)
+
+    user = request.user
+    if not user.is_authenticated:
+        return JsonResponse({"error": "User unauthorized"}, status=401)
+
     try:
-        user = User.objects.get(id=id)
-    except ObjectDoesNotExist:
-        return JsonResponse({ "error": "User does not exist" }, status = 404)
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    data = json.loads(request.body)
-    new_first_name = data.get("first_name")
-    new_last_name = data.get("last_name")
-    new_username = data.get("username")
-    new_password = data.get("password")
+    if not data.get('old_password'):
+        return JsonResponse({'error': "Old password not specified"}, status=403)
 
-    if new_first_name:
-        if len(new_first_name) > 50:
-            return JsonResponse({ "error": "First name is too long" }, status = 400)
+    if not user.check_password(data["old_password"]):
+        return JsonResponse({'error': "Old password is incorrect"}, status=403)
 
-    if new_last_name:
-        if len(new_last_name) > 50:
-            return JsonResponse({ "error": "Last name is too long" }, status = 400)
-
-    if new_username:
-        if len(new_username) > 50:
-            return JsonResponse({ "error": "Username is too long" }, status = 400)
-
-        existing_user = User.objects.exclude(pk=id).filter(username=new_username)
-        if existing_user:
-            return JsonResponse({ "error": "User already exists" }, status = 404)
-
-    if new_password:
-        if len(new_password) > 100:
-            return JsonResponse({ "error": "Password is too long" }, status = 400)
+    new_data = {
+        "first_name": data.get("new_first_name") or user.first_name,
+        "last_name": data.get("new_last_name") or user.last_name,
+        "username": data.get("new_username") or user.username,
+    }
 
 
-    if new_first_name is not None:
-        user.first_name = new_first_name
-    if new_last_name is not None:
-        user.last_name = new_last_name
-    if new_username is not None:
-        user.username = new_username
-    if new_password is not None:
-        user.password = new_password
-    user.save()
+    serializer = UserSerizalizer(instance=user, data=new_data, partial=True)
 
-    return JsonResponse({"details": "User was successfully updated"}, status = 200)
+    if serializer.is_valid():
+        print("Serializer is valid")
+        user = serializer.save()
+        if "new_password" in data and data["new_password"]:
+
+            if len(data["new_password"]) > 100:
+                return JsonResponse({"error": "Password is too long"}, status=400)
+            try:
+                validate_password(data['new_password'], user)
+            except Exception:
+                return JsonResponse({"error":"Invalid password"}, status = 403)
+            user.set_password(data["new_password"])
+            user.save()
+
+        return JsonResponse({"details": "User was successfully updated", 
+                             "userData": 
+                                {
+                                    "username":user.username,
+                                    "first_name":user.first_name,
+                                    "last_name":user.last_name,
+                                    "email":user.email,
+                                    "status":user.status
+                                }}, status=200)
+
+    print("Serializer is not valid")
+    print(serializer.errors)
+    return JsonResponse({"error": serializer.errors}, status=400)
+
+@api_view(['GET'])
+def user_events_by_pattern(request, pattern):
+    user = request.user
+    if not user.is_authenticated:
+        return Response({"error": "User not authenticated"}, status=401)
+        
+    event_ids = UserEvent.objects.filter(user=user).values_list('event', flat=True)
+    
+    events = Event.objects.filter(
+        Q(id__in=event_ids) & Q(name__contains=pattern) 
+    ).annotate(count=Count('userevent__user'))
+    
+    paginator = PageNumberPagination()
+    paginator.page_size = 21
+    paginated_events = paginator.paginate_queryset(events, request)
+    serializer = EventSerializer(paginated_events, many=True)
+    response = paginator.get_paginated_response(serializer.data)
+    
+    if response.data.get("next"):
+        response.data["next"] = response.data["next"].replace("http://", "https://")
+    if response.data.get("previous"):
+        response.data["previous"] = response.data["previous"].replace("http://", "https://")
+        
+    return response

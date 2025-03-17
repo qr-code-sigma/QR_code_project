@@ -1,6 +1,5 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import axiosInstance from "../../config/axiosConfig.js";
-import log from "eslint-plugin-react/lib/util/log.js";
 
 export const getMe = createAsyncThunk(
     "user/checkIsAuth",
@@ -22,6 +21,7 @@ export const authMe = createAsyncThunk(
 
             navigate("/");
 
+            window.location.reload();
             return response.data;
         } catch (e) {
             console.log(`Response in error: ${e.response.data.details}`)
@@ -73,6 +73,9 @@ export const authSlice = createSlice({
             state.authStatus = null;
             state.error = null;
         },
+        updateUserData: (state, action) => {
+            state.userData = action.payload.userData;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -104,6 +107,6 @@ export const authSlice = createSlice({
     },
 });
 
-export const {clearState} = authSlice.actions;
+export const {clearState, updateUserData} = authSlice.actions;
 
 export default authSlice.reducer;

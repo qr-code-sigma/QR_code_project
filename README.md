@@ -1,6 +1,8 @@
 ## About
 This project is a web application created by a group of 8 students as a part of a university project.  
-The application provides event management software for corporations and organizations that host events.  
+The application provides event management software for corporations and organizations that host events.
+
+## Video presentation: https://www.youtube.com/watch?v=BIkKI2NgnKA
 
 ### Features:
 - **Event types**: Public and private events  

@@ -35,6 +35,7 @@
 .event-title {
     font-size: 16px;
     font-weight: bold;
+    color: var(--text-color);
 }
 
 .event-description {
@@ -62,6 +63,7 @@
     font-style: italic;
     text-align: left;
     width: 100%;
+    color: var(--text-color);
 }
 
 .event-location {
@@ -80,6 +82,7 @@
     padding: 6px 12px;
     font-size: 12px;
     margin: 0;
+    color: var(--text-color);
 }
 
 .event-status.public {

@@ -1,9 +1,9 @@
 import React from "react";
 import "./loading.css";
 
-function Loading() {
+function Loading({ customClass }) {
   return (
-    <div className="loader-container">
+    <div className={`loader-container ${customClass || ""}`}>
       <div className="loader">
         <div className="box1"></div>
         <div className="box2"></div>

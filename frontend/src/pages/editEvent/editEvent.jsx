@@ -36,7 +36,7 @@ function EditEvent() {
       });
       const id = location.state.id;
       await axiosInstance.patch(`events/${id}`, newData);
-
+      localStorage.clear();
       navigate("/");
     } catch (error) {
       console.log(
@@ -149,6 +149,7 @@ function EditEvent() {
       </form>
       {error &&
         Object.entries(error).map(([key, value], index) => {
+
           return (
             <div key={index}>
               Error in field {key}

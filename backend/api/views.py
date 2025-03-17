@@ -96,6 +96,11 @@ def event_detail(request, id):
 
 @api_view(['GET'])
 def events_by_pattern(request, pattern):
+    user = request.user
+    if not user.is_authenticated:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
     events = Event.objects.filter(name__contains=pattern)
+    if user.status == 'guest':
+        events = events.filter(status='Public')
     events = events.annotate(count=Count('userevent__user'))
     return get_paginated_response(events, request)

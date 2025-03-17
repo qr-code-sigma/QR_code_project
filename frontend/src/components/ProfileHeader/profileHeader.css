@@ -28,6 +28,7 @@
     .profile-header-container {
         padding: 0 16px;
         gap: 10px;
+        justify-content: space-between;
     }
 
     .profile-header-text {

@@ -106,6 +106,7 @@ button:disabled {
 
 .btn-download {
     background: var(--btn-download);
+    color: var(--text-color);
 }
 
 .btn-default span, .btn-primary span, .btn-danger span, .btn-danger-low span, .btn-settings span, .btn-lg span, .btn-download span {
